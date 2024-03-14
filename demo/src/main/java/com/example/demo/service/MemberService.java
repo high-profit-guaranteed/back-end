@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.domain.Account;
 import com.example.demo.domain.Member;
 import com.example.demo.repository.MemberRepository;
 
@@ -40,6 +41,11 @@ public class MemberService {
       .ifPresent(m -> {
         throw new IllegalStateException("이미 존재하는 회원입니다.");
       });
+  }
+
+  public List<Account> getAccounts(Long memberId) {
+    // TODO: Account 가져오기
+    return null;
   }
 
 } 
