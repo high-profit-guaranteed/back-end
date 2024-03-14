@@ -2,46 +2,54 @@ package com.example.demo.domain;
 
 public class Account {
   private Long id;
-  private int account_number;
-  private String account_type;
-  private String account_name;
+  private Long memberId;       // 회원 번호
+  private int accountNumber;   // 계좌 번호
+  private String accountType;  // 계좌 유형 (실거래 계좌, 모의투자 계좌)
+  private String accountName;  // 계좌 이름 (개인 설정 가능한 계좌 이름)
   private String APP_KEY;
   private String APP_SECRET;
+
   public Long getId() {
     return id;
   }
   public void setId(Long id) {
     this.id = id;
   }
-  public int getAccount_number() {
-    return account_number;
+  public Long getMemberId() {
+    return memberId;
   }
-  public void setAccount_number(int account_number) {
-    this.account_number = account_number;
+  public void setMemberId(Long memberId) {
+    this.memberId = memberId;
   }
-  public String getAccount_type() {
-    return account_type;
+  public int getAccountNumber() {
+    return accountNumber;
   }
-  public void setAccount_type(String account_type) {
-    this.account_type = account_type;
+  public void setAccountNumber(int accountNumber) {
+    this.accountNumber = accountNumber;
   }
-  public String getAccount_name() {
-    return account_name;
+  public String getAccountType() {
+    return accountType;
   }
-  public void setAccount_name(String account_name) {
-    this.account_name = account_name;
+  public void setAccountType(String accountType) {
+    this.accountType = accountType;
+  }
+  public String getAccountName() {
+    return accountName;
+  }
+  public void setAccountName(String accountName) {
+    this.accountName = accountName;
   }
   public String getAPP_KEY() {
     return APP_KEY;
   }
-  public void setAPP_KEY(String aPP_KEY) {
-    APP_KEY = aPP_KEY;
+  public void setAPP_KEY(String APP_KEY) {
+    this.APP_KEY = APP_KEY;
   }
   public String getAPP_SECRET() {
     return APP_SECRET;
   }
-  public void setAPP_SECRET(String aPP_SECRET) {
-    APP_SECRET = aPP_SECRET;
+  public void setAPP_SECRET(String APP_SECRET) {
+    this.APP_SECRET = APP_SECRET;
   }
 
   
