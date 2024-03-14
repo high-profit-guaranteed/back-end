@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>로그인 페이지</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+  <form action="/signin" method="post">
+    <div>
+      <div>
+        <label for="userid">ID</label>
+        <input type="text" id="userid" name="userid" placeholder="아이디를 입력해주세요." />
+      </div>
+      <div>
+        <label for="password">PW</label>
+        <input type="password" id="password" name="password" placeholder="비밀번호를 입력해주세요." />
+      </div>
+      <button type="submit">로그인</button>
+    </div>
+    <div>
+      <a href="/signup">회원가입</a>
+      <p>ID/PW 찾기</p>
+    </div>
+  </form>
+</body>
+</html>
