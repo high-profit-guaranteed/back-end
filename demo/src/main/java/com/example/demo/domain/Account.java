@@ -51,6 +51,4 @@ public class Account {
   public void setAPP_SECRET(String APP_SECRET) {
     this.APP_SECRET = APP_SECRET;
   }
-
-  
 }
