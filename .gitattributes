@@ -1,2 +1,4 @@
 demo/** linguist-documentation=false
 demo/** linguist-vendored=false
+demo/gradlew linguist-vendored
+demo/gradlew.bat linguist-vendored
