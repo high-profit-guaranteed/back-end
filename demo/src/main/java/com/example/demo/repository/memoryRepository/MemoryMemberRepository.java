@@ -1,4 +1,4 @@
-package com.example.demo.repository;
+package com.example.demo.repository.memoryRepository;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.domain.Member;
+import com.example.demo.repository.MemberRepository;
 
 @Repository
 public class MemoryMemberRepository implements MemberRepository {
@@ -45,5 +46,4 @@ public class MemoryMemberRepository implements MemberRepository {
   public List<Member> findAll() {
     return List.copyOf(store.values());
   }
-  
 }

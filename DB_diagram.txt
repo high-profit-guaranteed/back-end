@@ -1,0 +1,34 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table member {
+  id integer [primary key]
+  uid varchar
+  email varchar
+  password varchar
+  name varchar
+  createdAt timestamp
+}
+
+Table account {
+  id integer [primary key]
+  memberId integer
+  accountNumber integer
+  accountType varchar
+  accountName varchar
+  APP_KEY varchar
+  APP_SECRET varchar
+  createAt timestamp
+}
+
+Table News {
+  id integer [primary key]
+  title varchar
+  content varchar
+  author varchar
+  createdAt timestamp
+  updatedAt timestamp
+  link varchar
+}
+
+Ref: member.id < account.memberId

@@ -15,6 +15,7 @@
             <th>name</th>
             <th>email</th>
             <th>password</th>
+            <th>link</th>
           </tr>
         </thead>
         <tbody>
@@ -24,6 +25,7 @@
             <td th:text="${member.name}"></td>
             <td th:text="${member.email}"></td>
             <td th:text="${member.password}"></td>
+            <td><a th:href="@{/member(uid=${member.uid})}">link</a></td>
           </tr>
         </tbody>
       </table>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>News</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+  <div class="container">
+    <form action="/news" method="post">
+      <button type="submit">Add Dummy News</button>
+    </form>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Author</th>
+            <th>Created Date</th>
+            <th>Updated Date</th>
+            <th>link</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="news : ${newsList}">
+            <td th:text="${news.id}">ID</td>
+            <td th:text="${news.title}">Title</td>
+            <td th:text="${news.content}">Content</td>
+            <td th:text="${news.author}">Author</td>
+            <td th:text="${news.createdAt}">Created Date</td>
+            <td th:text="${news.updatedAt}">Updated Date</td>
+            <td><a th:href="${news.link}">Link</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

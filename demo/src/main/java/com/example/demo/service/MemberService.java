@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.domain.Account;
 import com.example.demo.domain.Member;
 import com.example.demo.repository.MemberRepository;
 
@@ -31,6 +32,11 @@ public class MemberService {
       .orElseThrow(() -> new IllegalStateException("해당 회원이 존재하지 않습니다."));
   }
 
+  public Member findByUid(String uid) {
+    return memberRepository.findByUid(uid)
+      .orElseThrow(() -> new IllegalStateException("해당 회원이 존재하지 않습니다." + uid));
+  }
+
   private void validateDuplicateMember(Member member) {
     memberRepository.findByEmail(member.getEmail())
       .ifPresent(m -> {
@@ -40,6 +46,11 @@ public class MemberService {
       .ifPresent(m -> {
         throw new IllegalStateException("이미 존재하는 회원입니다.");
       });
+  }
+
+  public List<Account> getAccounts(Long memberId) {
+    // TODO: Account 가져오기
+    return null;
   }
 
 } 
