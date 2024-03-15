@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>계좌 추가 페이지</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+  <form action="/addAccount" method="post">
+    <div>
+      <label for="memberUid">ID</label>
+      <input type="text" id="memberUid" name="memberUid" placeholder="아이디를 입력해주세요." />
+    </div>
+    <div>
+      <label for="accountNumber">계좌 번호</label>
+      <input type="text" id="accountNumber" name="accountNumber" placeholder="계좌 번호를 입력해주세요." />
+    </div>
+    <div>
+      <label for="accountName">계좌 이름</label>
+      <input type="text" id="accountName" name="accountName" placeholder="이름을 입력해주세요." />
+    </div>
+    <div>
+      <label for="accountType">계좌 타입</label>
+      <input type="text" id="accountType" name="accountType" placeholder="계좌 타입을 입력해주세요." />
+    </div>
+    <div>
+      <label for="APP_KEY">APP KEY</label>
+      <input type="text" id="APP_KEY" name="APP_KEY" placeholder="APP KEY를 입력해주세요." />
+    </div>
+    <div>
+      <label for="APP_SECRET">APP SECRET</label>
+      <input type="text" id="APP_SECRET" name="APP_SECRET" placeholder="APP SECRET를 입력해주세요." />
+    </div>
+    <button type="submit">계좌 추가</button>
+  </form>
+</body>
+</html>

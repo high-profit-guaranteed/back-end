@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.News;
@@ -21,5 +23,9 @@ public class NewsService {
   public News findOne(Long newsId) {
     return newsRepository.findById(newsId)
       .orElseThrow(() -> new IllegalStateException("해당 뉴스가 존재하지 않습니다."));
+  }
+
+  public List<News> findNews() {
+    return newsRepository.findAll();
   }
 }

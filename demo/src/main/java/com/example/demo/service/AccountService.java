@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.Account;
@@ -20,5 +22,13 @@ public class AccountService {
   public Account findOne(Long accountId) {
     return accountRepository.findById(accountId)
       .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
+  }
+
+  public List<Account> findAccounts() {
+    return accountRepository.findAll();
+  }
+
+  public List<Account> findByMemberId(Long memberId) {
+    return accountRepository.findByMemberId(memberId);
   }
 }

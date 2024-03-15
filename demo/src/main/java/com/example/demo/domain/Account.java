@@ -4,8 +4,8 @@ public class Account {
   private Long id;
   private Long memberId;       // 회원 번호
   private int accountNumber;   // 계좌 번호
-  private String accountType;  // 계좌 유형 (실거래 계좌, 모의투자 계좌)
-  private String accountName;  // 계좌 이름 (개인 설정 가능한 계좌 이름)
+  private String accountName;  // 계좌 이름 (개인 설정 가능한 계좌 이름
+  private String accountType;  // 계좌 유형 (실거래 계좌, 모의투자 계좌))
   private String APP_KEY;
   private String APP_SECRET;
 
@@ -27,17 +27,17 @@ public class Account {
   public void setAccountNumber(int accountNumber) {
     this.accountNumber = accountNumber;
   }
-  public String getAccountType() {
-    return accountType;
-  }
-  public void setAccountType(String accountType) {
-    this.accountType = accountType;
-  }
   public String getAccountName() {
     return accountName;
   }
   public void setAccountName(String accountName) {
     this.accountName = accountName;
+  }
+  public String getAccountType() {
+    return accountType;
+  }
+  public void setAccountType(String accountType) {
+    this.accountType = accountType;
   }
   public String getAPP_KEY() {
     return APP_KEY;

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>member</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+  <div class="container">
+    <div>
+      <h1>회원 조회</h1>
+      <h2>회원 정보</h2>
+      <h3>ID</h3>
+      <p th:text="${member.id}"></p>
+      <h3>User ID</h3>
+      <p th:text="${member.uid}"></p>
+      <h3>Name</h3>
+      <p th:text="${member.name}"></p>
+      <h3>Email</h3>
+      <p th:text="${member.email}"></p>
+      <h3>Password</h3>
+      <p th:text="${member.password}"></p>
+
+      <h2>계좌 정보</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Member Id</th>
+            <th>Account Number</th>
+            <th>Account Name</th>
+            <th>type</th>
+            <th>APP KEY</th>
+            <th>APP SECRET</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="account : ${accounts}">
+            <td th:text="${account.id}"></td>
+            <td th:text="${account.memberId}"></td>
+            <td th:text="${account.accountNumber}"></td>
+            <td th:text="${account.accountName}"></td>
+            <td th:text="${account.accountType}"></td>
+            <td th:text="${account.APP_KEY}"></td>
+            <td th:text="${account.APP_SECRET}"></td>
+          </tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

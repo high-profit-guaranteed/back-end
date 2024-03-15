@@ -29,7 +29,7 @@ public class MemoryAccountRepository implements AccountRepository{
   }
 
   @Override
-  public Optional<Account> findByAccount_number(int accountNumber) {
+  public Optional<Account> findByAccountNumber(int accountNumber) {
     return store.values().stream()
       .filter(account -> account.getAccountNumber() == accountNumber)
       .findAny();
@@ -41,7 +41,7 @@ public class MemoryAccountRepository implements AccountRepository{
   }
 
   @Override
-  public List<Account> findByMember_id(Long memberId) {
+  public List<Account> findByMemberId(Long memberId) {
     return store.values().stream()
       .filter(account -> account.getMemberId() == memberId)
       .toList();

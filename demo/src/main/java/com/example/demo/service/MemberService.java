@@ -32,6 +32,11 @@ public class MemberService {
       .orElseThrow(() -> new IllegalStateException("해당 회원이 존재하지 않습니다."));
   }
 
+  public Member findByUid(String uid) {
+    return memberRepository.findByUid(uid)
+      .orElseThrow(() -> new IllegalStateException("해당 회원이 존재하지 않습니다." + uid));
+  }
+
   private void validateDuplicateMember(Member member) {
     memberRepository.findByEmail(member.getEmail())
       .ifPresent(m -> {
