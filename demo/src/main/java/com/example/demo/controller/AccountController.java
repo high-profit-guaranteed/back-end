@@ -1,10 +1,13 @@
 package com.example.demo.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.example.demo.domain.Account;
+import com.example.demo.domain.Member;
 import com.example.demo.service.AccountService;
 import com.example.demo.service.MemberService;
 
@@ -19,40 +22,37 @@ public class AccountController {
   }
 
   @GetMapping("/addAccount")
-  public String addAccount() {
-    return "/addAccount";
+  public String addAccount(@SessionAttribute(name = "id", required = false) Long id, Model model) {
+    Member member = memberService.getSigninMember(id);
+    if (member == null) {
+      return "redirect:/signin";
+    }
+
+    model.addAttribute("member", member);
+    return "signin/addAccount";
   }
 
   // @GetMapping("/accounts")
 
   @PostMapping("/addAccount")
-  public String postMethodName(AccountForm form) {
-    Account account = new Account(memberService.findByUid(form.getMemberUid()).getId(),
-        Integer.parseInt(form.getAccountNumber()), form.getAccountName(), form.getAccountType(), form.getAPP_KEY(),
-        form.getAPP_SECRET());
+  public String postMethodName(AccountForm form, @SessionAttribute(name = "id", required = false) Long id,
+      Model model) {
+    Account account = new Account(id, Integer.parseInt(form.getAccountNumber()), form.getAccountName(),
+        form.getAccountType(), form.getAPP_KEY(), form.getAPP_SECRET());
 
     accountService.join(account);
 
-    return "redirect:/members";
+    return "redirect:/home";
   }
 
 }
 
 class AccountForm {
-  private String memberUid;
   private String accountNumber;
   private String accountName;
   private String accountType;
   private String APP_KEY;
   private String APP_SECRET;
-
-  public String getMemberUid() {
-    return memberUid;
-  }
-
-  public void setMemberUid(String memberUid) {
-    this.memberUid = memberUid;
-  }
 
   public String getAccountNumber() {
     return accountNumber;

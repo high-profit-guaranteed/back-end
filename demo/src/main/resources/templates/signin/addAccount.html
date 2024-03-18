@@ -10,7 +10,7 @@
   <form action="/addAccount" method="post">
     <div>
       <label for="memberUid">ID</label>
-      <input type="text" id="memberUid" name="memberUid" placeholder="아이디를 입력해주세요." />
+      <p th:text="${member.uid}"></p>
     </div>
     <div>
       <label for="accountNumber">계좌 번호</label>
@@ -18,11 +18,13 @@
     </div>
     <div>
       <label for="accountName">계좌 이름</label>
-      <input type="text" id="accountName" name="accountName" placeholder="이름을 입력해주세요." />
+      <input type="text" id="accountName" name="accountName" placeholder="계좌 이름을 입력해주세요." />
     </div>
     <div>
       <label for="accountType">계좌 타입</label>
-      <input type="text" id="accountType" name="accountType" placeholder="계좌 타입을 입력해주세요." />
+      <select id="accountType" name="accountType">
+        <option value="real">실전투자계좌</option>
+        <option value="fake">모의투자계좌</option>
     </div>
     <div>
       <label for="APP_KEY">APP KEY</label>
