@@ -8,6 +8,8 @@ import com.example.demo.domain.Account;
 import com.example.demo.domain.Member;
 import com.example.demo.repository.MemberRepository;
 
+import jakarta.validation.constraints.NotNull;
+
 @Service
 public class MemberService {
 
@@ -62,12 +64,17 @@ public class MemberService {
   }
 
   public Member signin(String uid, String password) {
+    @NotNull
     Member member = memberRepository.findByUid(uid)
-        .orElseThrow(() -> new IllegalStateException("해당 회원이 존재하지 않습니다." + uid));
-    if (!member.getPassword().equals(password)) {
-      throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
+        .orElse(null);
+    if (member != null && !member.getPassword().equals(password)) {
+      member = null;
     }
     return member;
+  }
+
+  public Member getSigninMember(Long id) {
+    return memberRepository.findById(id).orElse(null);
   }
 
   public void clearStore() {
