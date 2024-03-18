@@ -36,32 +36,32 @@ public class MemoryNewsRepository implements NewsRepository {
   @Override
   public List<News> findByAuthor(String author) {
     return store.values().stream()
-      .filter(news -> news.getAuthor().equals(author))
-      .toList();
+        .filter(news -> news.getAuthor().equals(author))
+        .toList();
   }
 
   // TODO: 특정 제목 검색 기능 구현
   @Override
   public List<News> findByTitle(String title) {
     return store.values().stream()
-      .filter(news -> news.getTitle().equals(title))
-      .toList();
+        .filter(news -> news.getTitle().equals(title))
+        .toList();
   }
 
   // TODO: 특정 내용 검색 기능 구현
   @Override
   public List<News> findByContent(String content) {
     return store.values().stream()
-      .filter(news -> news.getContent().equals(content))
-      .toList();
+        .filter(news -> news.getContent().equals(content))
+        .toList();
   }
 
   // TODO: 특정 날짜 검색 기능 구현
   @Override
   public List<News> findByDate(String date) {
     return store.values().stream()
-      .filter(news -> news.getCreatedAt().equals(date))
-      .toList();
+        .filter(news -> news.getCreatedAt().equals(date))
+        .toList();
   }
-  
+
 }

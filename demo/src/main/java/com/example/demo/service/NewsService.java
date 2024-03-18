@@ -9,7 +9,7 @@ import com.example.demo.repository.NewsRepository;
 
 @Service
 public class NewsService {
-  
+
   private final NewsRepository newsRepository;
 
   public NewsService(NewsRepository newsRepository) {
@@ -22,7 +22,7 @@ public class NewsService {
 
   public News findOne(Long newsId) {
     return newsRepository.findById(newsId)
-      .orElseThrow(() -> new IllegalStateException("해당 뉴스가 존재하지 않습니다."));
+        .orElseThrow(() -> new IllegalStateException("해당 뉴스가 존재하지 않습니다."));
   }
 
   public List<News> findNews() {
