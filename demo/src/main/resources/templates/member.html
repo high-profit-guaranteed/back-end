@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <title>member</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
+
 <body>
   <div class="container">
     <div>
@@ -21,7 +23,7 @@
       <p th:text="${member.password}"></p>
 
       <h2>계좌 정보</h2>
-      <table>
+      <table style="border: 1px solid black;">
         <thead>
           <tr>
             <th>Id</th>
@@ -47,4 +49,5 @@
     </div>
   </div>
 </body>
+
 </html>

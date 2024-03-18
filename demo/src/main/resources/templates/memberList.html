@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <title>members</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
+
 <body>
   <div class="container">
     <div>
@@ -25,11 +27,12 @@
             <td th:text="${member.name}"></td>
             <td th:text="${member.email}"></td>
             <td th:text="${member.password}"></td>
-            <td><a th:href="@{/member(uid=${member.uid})}">link</a></td>
+            <td><a th:href="@{member/{uid}(uid=${member.uid})}">link</a></td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 </body>
+
 </html>

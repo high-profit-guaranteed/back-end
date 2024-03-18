@@ -28,16 +28,11 @@ public class NewsController {
   @PostMapping("/news")
   public String createDummyNews() {
     int length = newsService.findNews().size() + 1;
-    News news = new News();
-    news.setTitle("[dumy title " + length + "]");
-    news.setContent("[dumy content " + length + "]");
-    news.setAuthor("[dumy author " + length + "]");
-    news.setCreatedAt("[dumy createdAt " + length + "]");
-    news.setUpdatedAt("[dumy updatedAt " + length + "]");
-    news.setLink("[dumy link " + length + "]");
+    News news = new News("[dumy title " + length + "]", "[dumy content " + length + "]", "[dumy author " + length + "]",
+        "[dumy createdAt " + length + "]", "[dumy updatedAt " + length + "]", "[dumy link " + length + "]");
     newsService.join(news);
 
     return "redirect:/news";
   }
-  
+
 }

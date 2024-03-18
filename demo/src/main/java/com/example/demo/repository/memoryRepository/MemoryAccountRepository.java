@@ -11,7 +11,7 @@ import com.example.demo.domain.Account;
 import com.example.demo.repository.AccountRepository;
 
 @Repository
-public class MemoryAccountRepository implements AccountRepository{
+public class MemoryAccountRepository implements AccountRepository {
 
   private static Map<Long, Account> store = new HashMap<>();
   private static long sequence = 0L;
@@ -31,8 +31,8 @@ public class MemoryAccountRepository implements AccountRepository{
   @Override
   public Optional<Account> findByAccountNumber(int accountNumber) {
     return store.values().stream()
-      .filter(account -> account.getAccountNumber() == accountNumber)
-      .findAny();
+        .filter(account -> account.getAccountNumber() == accountNumber)
+        .findAny();
   }
 
   @Override
@@ -43,7 +43,7 @@ public class MemoryAccountRepository implements AccountRepository{
   @Override
   public List<Account> findByMemberId(Long memberId) {
     return store.values().stream()
-      .filter(account -> account.getMemberId() == memberId)
-      .toList();
+        .filter(account -> account.getMemberId() == memberId)
+        .toList();
   }
 }

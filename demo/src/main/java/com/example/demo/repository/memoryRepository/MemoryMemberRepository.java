@@ -18,6 +18,12 @@ public class MemoryMemberRepository implements MemberRepository {
 
   @Override
   public Member addMember(Member member) {
+    if (existsByUid(member.getUid())) {
+      throw new IllegalStateException("이미 존재하는 회원입니다.");
+    }
+    if (existsByEmail(member.getEmail())) {
+      throw new IllegalStateException("이미 존재하는 이메일입니다.");
+    }
     member.setId(++sequence);
     store.put(member.getId(), member);
     return member;
@@ -31,19 +37,37 @@ public class MemoryMemberRepository implements MemberRepository {
   @Override
   public Optional<Member> findByUid(String uid) {
     return store.values().stream()
-      .filter(member -> member.getUid().equals(uid))
-      .findAny();
+        .filter(member -> member.getUid().equals(uid))
+        .findAny();
   }
 
   @Override
   public Optional<Member> findByEmail(String email) {
     return store.values().stream()
-      .filter(member -> member.getEmail().equals(email))
-      .findAny();
+        .filter(member -> member.getEmail().equals(email))
+        .findAny();
   }
 
   @Override
   public List<Member> findAll() {
     return List.copyOf(store.values());
+  }
+
+  @Override
+  public void clearStore() {
+    store.clear();
+    sequence = 0L;
+  }
+
+  @Override
+  public boolean existsByUid(String uid) {
+    return store.values().stream()
+        .anyMatch(member -> member.getUid().equals(uid));
+  }
+
+  @Override
+  public boolean existsByEmail(String email) {
+    return store.values().stream()
+        .anyMatch(member -> member.getEmail().equals(email));
   }
 }
