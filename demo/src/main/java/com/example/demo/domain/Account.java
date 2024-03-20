@@ -9,6 +9,9 @@ public class Account {
   private String APP_KEY;
   private String APP_SECRET;
 
+  private String accessToken;
+  private String accessTokenExpired;
+
   public Account(Long memberId, int accountNumber, String accountName, String accountType, String aPP_KEY,
       String aPP_SECRET) {
     this.memberId = memberId;
@@ -73,5 +76,21 @@ public class Account {
 
   public void setAPP_SECRET(String APP_SECRET) {
     this.APP_SECRET = APP_SECRET;
+  }
+
+  public String getAccessToken() {
+    return accessToken;
+  }
+
+  public void setAccessToken(String accessToken) {
+    this.accessToken = accessToken;
+  }
+
+  public String getAccessTokenExpired() {
+    return accessTokenExpired;
+  }
+
+  public void setAccessTokenExpired(String accessTokenExpired) {
+    this.accessTokenExpired = accessTokenExpired;
   }
 }
