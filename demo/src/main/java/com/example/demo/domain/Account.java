@@ -1,7 +1,20 @@
 package com.example.demo.domain;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
+// @NamedQuery(
+//   name = "Account.updateAccessToken",
+//   query = "update Account a set a.accessToken = :accessToken, a.accessTokenExpired = :accessTokenExpired where a.id = :accountId"
+// )
 public class Account {
+
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
   private Long memberId; // 회원 번호
   private int accountNumber; // 계좌 번호
   private String accountName; // 계좌 이름 (개인 설정 가능한 계좌 이름)
@@ -11,6 +24,9 @@ public class Account {
 
   private String accessToken;
   private String accessTokenExpired;
+
+  public Account() {
+  }
 
   public Account(Long memberId, int accountNumber, String accountName, String accountType, String aPP_KEY,
       String aPP_SECRET) {

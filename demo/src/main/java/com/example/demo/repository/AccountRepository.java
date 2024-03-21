@@ -6,7 +6,7 @@ import java.util.Optional;
 import com.example.demo.domain.Account;
 
 public interface AccountRepository {
-  public Account addAccount(Account account);
+  public Account save(Account account);
 
   public Optional<Account> findById(Long id);
 
@@ -18,7 +18,7 @@ public interface AccountRepository {
 
   public Optional<Account> findByAccountNumber(Long accountNumber);
 
-  public void updateAccessToken(Long accountId, String accessToken, String accessTokenExpired);
+  // public void updateAccessToken(Long accountId, String accessToken, String accessTokenExpired);
 
-  public void clearStore();
+  // public void clearStore();
 }

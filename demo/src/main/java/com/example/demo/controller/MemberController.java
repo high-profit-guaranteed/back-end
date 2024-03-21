@@ -32,7 +32,7 @@ public class MemberController {
   @PostMapping("/signup")
   public String create(MemberFrom form) {
 
-    Member member = new Member(form.getUid(), form.getEmail(), form.getPassword(), form.getName());
+    Member member = new Member(form.getUid(), form.getEmail().split("@")[0], form.getEmail().split("@")[1], form.getPassword(), form.getName());
 
     memberService.join(member);
 
