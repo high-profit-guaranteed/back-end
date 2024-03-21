@@ -1,17 +1,32 @@
 package com.example.demo.domain;
 
-public class Member {
-  private Long id;
-  private String uid;
-  private String email;
-  private String password;
-  private String name;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
-  public Member(String uid, String email, String password, String name) {
+
+@Entity
+public class Member {
+
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  private String pw;
+  private String uid;
+  private String memberName;
+  private String emailName;
+  private String emailDomain;
+
+  public Member() {
+  }
+  
+  public Member(String uid, String emailName, String emailDomain, String pw, String memberName) {
     this.uid = uid;
-    this.email = email;
-    this.password = password;
-    this.name = name;
+    this.emailName = emailName;
+    this.emailDomain = emailDomain;
+    this.pw = pw;
+    this.memberName = memberName;
   }
 
   public Long getId() {
@@ -30,27 +45,35 @@ public class Member {
     this.uid = uid;
   }
 
-  public String getEmail() {
-    return email;
+  public String getEmailName() {
+    return emailName;
   }
 
-  public void setEmail(String email) {
-    this.email = email;
+  public void setEmailName(String emailName) {
+    this.emailName = emailName;
   }
 
-  public String getPassword() {
-    return password;
+  public String getPw() {
+    return pw;
   }
 
-  public void setPassword(String password) {
-    this.password = password;
+  public void setPw(String pw) {
+    this.pw = pw;
   }
 
-  public String getName() {
-    return name;
+  public String getMemberName() {
+    return memberName;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setMemberName(String memberName) {
+    this.memberName = memberName;
+  }
+
+  public String getEmailDomain() {
+    return emailDomain;
+  }
+
+  public void setEmailDomain(String emailDomain) {
+    this.emailDomain = emailDomain;
   }
 }

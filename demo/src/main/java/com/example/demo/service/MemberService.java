@@ -2,13 +2,12 @@ package com.example.demo.service;
 
 import java.util.List;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.Account;
 import com.example.demo.domain.Member;
 import com.example.demo.repository.MemberRepository;
-
-import jakarta.validation.constraints.NotNull;
 
 @Service
 public class MemberService {
@@ -21,7 +20,7 @@ public class MemberService {
 
   public Long join(Member member) {
     validateDuplicateMember(member);
-    memberRepository.addMember(member);
+    memberRepository.save(member);
     return member.getId();
   }
 
@@ -29,32 +28,39 @@ public class MemberService {
     return memberRepository.findAll();
   }
 
-  public Member findOne(Long memberId) {
+  public Member findOne(@NonNull Long memberId) {
     return memberRepository.findById(memberId)
         .orElseThrow(() -> new IllegalStateException("해당 회원이 존재하지 않습니다."));
   }
 
-  public Member findByUid(String uid) {
+  public Member findByUid(@NonNull String uid) {
     return memberRepository.findByUid(uid)
         .orElseThrow(() -> new IllegalStateException("해당 회원이 존재하지 않습니다." + uid));
   }
 
   private void validateDuplicateMember(Member member) {
-    if(validateUidDuplication(member.getUid())) {
+    String uid = member.getUid();
+    String email = member.getEmailName();
+
+    if (uid == null || email == null) {
+      throw new IllegalStateException("uid 또는 email이 null입니다.");
+    }
+
+    if(validateUidDuplication(uid)) {
       throw new IllegalStateException("이미 존재하는 회원입니다.");
     }
-    if(validateEmailDuplication(member.getEmail())) {
+    if(validateEmailDuplication(email)) {
       throw new IllegalStateException("이미 존재하는 이메일입니다.");
     }
   }
 
-  public boolean validateUidDuplication(String uid) {
+  public boolean validateUidDuplication(@NonNull String uid) {
     boolean uidDuplicate = memberRepository.existsByUid(uid);
     return uidDuplicate;
   }
 
-  public boolean validateEmailDuplication(String email) {
-    boolean emailDuplicate = memberRepository.existsByEmail(email);
+  public boolean validateEmailDuplication(@NonNull String email) {
+    boolean emailDuplicate = memberRepository.existsByEmailName(email);
     return emailDuplicate;
   }
 
@@ -63,22 +69,21 @@ public class MemberService {
     return null;
   }
 
-  public Member signin(String uid, String password) {
-    @NotNull
+  public Member signin(@NonNull String uid, @NonNull String password) {
     Member member = memberRepository.findByUid(uid)
         .orElse(null);
-    if (member != null && !member.getPassword().equals(password)) {
+    if (member != null && !member.getPw().equals(password)) {
       member = null;
     }
     return member;
   }
 
-  public Member getSigninMember(Long id) {
+  public Member getSigninMember(@NonNull Long id) {
     return memberRepository.findById(id).orElse(null);
   }
 
-  public void clearStore() {
-    memberRepository.clearStore();
-  }
+  // public void clearStore() {
+  //   memberRepository.clearStore();
+  // }
 
 }
