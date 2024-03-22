@@ -28,6 +28,9 @@ public class HomeController {
     model.addAttribute("loginType", "session-login");
     model.addAttribute("pageName", "세션 로그인");
 
+    if (id == null) {
+      return "redirect:/signin";
+    }
     Member member = memberService.getSigninMember(id);
     if (member == null) {
       return "redirect:/signin";

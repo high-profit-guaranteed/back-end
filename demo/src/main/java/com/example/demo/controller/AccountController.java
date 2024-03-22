@@ -3,13 +3,17 @@ package com.example.demo.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.example.demo.domain.Account;
 import com.example.demo.domain.Member;
 import com.example.demo.service.AccountService;
 import com.example.demo.service.MemberService;
+import com.example.demo.service.DTO.GetBalanceResBodyDto;
+
 
 @Controller
 public class AccountController {
@@ -23,6 +27,9 @@ public class AccountController {
 
   @GetMapping("/addAccount")
   public String addAccount(@SessionAttribute(name = "id", required = false) Long id, Model model) {
+    if (id == null) {
+      return "redirect:/signin";
+    }
     Member member = memberService.getSigninMember(id);
     if (member == null) {
       return "redirect:/signin";
@@ -35,8 +42,16 @@ public class AccountController {
   // @GetMapping("/accounts")
 
   @PostMapping("/addAccount")
-  public String postMethodName(AccountForm form, @SessionAttribute(name = "id", required = false) Long id,
+  public String postAddAccount(AccountForm form, @SessionAttribute(name = "id", required = false) Long id,
       Model model) {
+    if (id == null) {
+      return "redirect:/signin";
+    }
+    Member member = memberService.getSigninMember(id);
+    if (member == null) {
+      return "redirect:/signin";
+    }
+
     Account account = new Account(id, Integer.parseInt(form.getAccountNumber()), form.getAccountName(),
         form.getAccountType(), form.getAPP_KEY(), form.getAPP_SECRET());
 
@@ -44,6 +59,48 @@ public class AccountController {
 
     return "redirect:/home";
   }
+
+  @GetMapping("/getAccessToken/{accountId}")
+  public String accessToken(@PathVariable("accountId") Long accountId, @SessionAttribute(name = "id", required = false) Long id, Model model) {
+    if (accountId == null || id == null) {
+      return "redirect:/signin";
+    }
+    Member member = memberService.getSigninMember(id);
+    if (member == null) {
+      return "redirect:/signin";
+    }
+
+    Account account = accountService.findOne(accountId);
+    if (account == null) {
+      return "redirect:/home";
+    }
+
+    accountService.getAccessToken(accountId);
+    return "redirect:/home";
+  }
+
+  @ResponseBody
+  @GetMapping("/getAccountInfo/{accountId}")
+  public String getAccountInfo(@PathVariable("accountId") Long accountId, @SessionAttribute(name = "id", required = false) Long id, Model model) {
+    if (accountId == null || id == null) {
+      return "redirect:/signin";
+    }
+    Member member = memberService.getSigninMember(id);
+    if (member == null) {
+      return "redirect:/signin";
+    }
+
+    Account account = accountService.findOne(accountId);
+    if (account == null) {
+      return "redirect:/home";
+    }
+
+    GetBalanceResBodyDto balance = accountService.getAccountInfo(accountId);
+    model.addAttribute("balance", balance);
+    
+    return balance.toString();
+  }
+  
 
 }
 

@@ -40,29 +40,40 @@ public class MemberService {
 
   private void validateDuplicateMember(Member member) {
     String uid = member.getUid();
-    String email = member.getEmailName();
+    String emailName = member.getEmailName();
+    String emailDomain = member.getEmailDomain();
 
-    if (uid == null || email == null) {
-      throw new IllegalStateException("uid 또는 email이 null입니다.");
+    if (uid == null || emailName == null || emailDomain == null) {
+      throw new IllegalStateException("회원 정보를 모두 입력해주세요.");
     }
 
     if(validateUidDuplication(uid)) {
       throw new IllegalStateException("이미 존재하는 회원입니다.");
     }
-    if(validateEmailDuplication(email)) {
+    if(validateEmailDuplication(emailName+"@"+emailDomain)) {
       throw new IllegalStateException("이미 존재하는 이메일입니다.");
     }
   }
 
-  public boolean validateUidDuplication(@NonNull String uid) {
-    boolean uidDuplicate = memberRepository.existsByUid(uid);
-    return uidDuplicate;
+  private boolean validateUidDuplication(@NonNull String uid) {
+    return memberRepository.existsByUid(uid);
   }
 
-  public boolean validateEmailDuplication(@NonNull String email) {
-    boolean emailDuplicate = memberRepository.existsByEmailName(email);
-    return emailDuplicate;
+  private boolean validateEmailDuplication(@NonNull String email) {
+    if (email.split("@").length != 2) {
+      throw new IllegalStateException("이메일 형식을 확인해주세요.");
+    }
+
+    String emailName = email.split("@")[0];
+    String emailDomain = email.split("@")[1];
+
+    if (emailName == null || emailDomain == null) {
+      throw new IllegalStateException("이메일 형식을 확인해주세요.");
+    }
+
+    return memberRepository.existsByEmailNameAndEmailDomain(emailName, emailDomain);
   }
+
 
   public List<Account> getAccounts(Long memberId) {
     // TODO: Account 가져오기

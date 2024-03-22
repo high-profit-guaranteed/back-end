@@ -19,6 +19,9 @@ public class MainController {
 
   @GetMapping("/")
   public String mainPage(Model model, @SessionAttribute(name = "id", required = false) Long id) {
+    if (id == null) {
+      return "redirect:/signin";
+    }
     Member member = memberService.getSigninMember(id);
     if (member == null) {
       return "redirect:/signin";

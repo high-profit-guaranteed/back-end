@@ -22,6 +22,7 @@ public class MemberDomainTests {
     // Then
     Assertions.assertThat(member.getUid()).isEqualTo("uid");
     Assertions.assertThat(member.getEmailName()).isEqualTo("email");
+    Assertions.assertThat(member.getEmailDomain()).isEqualTo("gmail.com");
     Assertions.assertThat(member.getPw()).isEqualTo("password");
     Assertions.assertThat(member.getMemberName()).isEqualTo("name");
   }

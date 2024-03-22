@@ -13,6 +13,9 @@ import com.example.demo.domain.Member;
 import com.example.demo.service.AccountService;
 import com.example.demo.service.MemberService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 public class MemberController {
 
@@ -48,6 +51,12 @@ public class MemberController {
 
   @GetMapping("/member/{uid}")
   public String getMember(Model model, @PathVariable("uid") String uid) {
+
+    log.info(uid);
+
+    if (uid == null) {
+      return "redirect:/";
+    }
     Member member = memberService.findByUid(uid);
     model.addAttribute("member", member);
 
