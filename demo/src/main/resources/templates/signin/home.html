@@ -16,9 +16,9 @@
   <h3>User ID</h3>
   <p th:text="${member.uid}"></p>
   <h3>Name</h3>
-  <p th:text="${member.name}"></p>
+  <p th:text="${member.memberName}"></p>
   <h3>Email</h3>
-  <p th:text="${member.email}"></p>
+  <p th:text="${member.emailName}+'@'+${member.emailDomain}"></p>
 
   <h1>계좌 정보</h1>
   <table style="border: 1px solid black;">
@@ -30,7 +30,10 @@
         <th>Account Name</th>
         <th>type</th>
         <th>APP KEY</th>
-        <th>APP SECRET</th>
+        <th>접근토큰 발급</th>
+        <th>계좌 조회</th>
+        <th>접근토큰</th>
+        <th>접근토큰 파기</th>
       </tr>
     </thead>
     <tbody>
@@ -41,8 +44,16 @@
         <td th:text="${account.accountName}"></td>
         <td th:text="${account.accountType}"></td>
         <td th:text="${account.APP_KEY}"></td>
-        <td th:text="${account.APP_SECRET}"></td>
+        <td>
+          <a th:href="@{/getAccessToken/{id}(id=${account.id})}">접근토큰 발급</a>
+        </td>
+        <td>
+          <a th:href="@{/getAccountInfo/{id}(id=${account.id})}">계좌 조회</a>
+        </td>
+        <td th:text="${account.accessToken}"></td>
+        <td th:text="${account.accessTokenExpired}"></td>
       </tr>
+    </tbody>
   </table>
 
 </body>

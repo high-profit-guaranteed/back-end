@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,7 +34,18 @@ public class SigninController {
     model.addAttribute("loginType", "session-login");
     model.addAttribute("pageName", "세션 로그인");
 
-    Member member = memberService.signin(loginRequest.getUid(), loginRequest.getPassword());
+    if (bindingResult.hasErrors()) {
+      return "signin";
+    }
+
+    String uid = loginRequest.getUid();
+    String password = loginRequest.getPassword();
+
+    if (uid == null || uid.isEmpty() || password == null || password.isEmpty()) {
+      return "signin";
+    }
+
+    Member member = memberService.signin(uid, password);
 
     if (member == null) {
       return "signin";
@@ -54,22 +66,19 @@ public class SigninController {
 }
 
 class LoginRequest {
-  private String uid;
-  private String password;
+  @NonNull private final String uid;
+  @NonNull private final String password;
+
+  public LoginRequest(@NonNull String uid, @NonNull String password) {
+    this.uid = uid;
+    this.password = password;
+  }
 
   public String getUid() {
     return uid;
   }
 
-  public void setUid(String uid) {
-    this.uid = uid;
-  }
-
   public String getPassword() {
     return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
   }
 }

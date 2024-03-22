@@ -17,8 +17,4 @@ public interface AccountRepository {
   public List<Account> findByMemberId(Long memberId);
 
   public Optional<Account> findByAccountNumber(Long accountNumber);
-
-  // public void updateAccessToken(Long accountId, String accessToken, String accessTokenExpired);
-
-  // public void clearStore();
 }
