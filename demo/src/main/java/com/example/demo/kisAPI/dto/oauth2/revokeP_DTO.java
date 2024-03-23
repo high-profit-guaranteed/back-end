@@ -4,24 +4,7 @@ import org.springframework.lang.NonNull;
 
 import com.example.demo.domain.Account;
 
-public class Approval_DTO {
-  public static class ReqHeader {
-    @NonNull
-    private final String content_type;
-
-    private ReqHeader(@NonNull String content_type) {
-      this.content_type = content_type;
-    }
-
-    public ReqHeader() {
-      this("application/json; utf-8");
-    }
-
-    public String getContent_type() {
-      return content_type;
-    }
-  }
-
+public class revokeP_DTO {
   public static class ReqBody {
     @NonNull
     private final String grant_type;
@@ -61,19 +44,25 @@ public class Approval_DTO {
   }
 
   public static class ResBody {
-    private final String approval_key;
+    private final String code;
+    private final String message;
 
-    public ResBody(String approval_key) {
-      this.approval_key = approval_key;
+    public ResBody(String code, String message) {
+      this.code = code;
+      this.message = message;
     }
 
-    public String getApproval_key() {
-      return approval_key;
+    public String getCode() {
+      return code;
+    }
+
+    public String getMessage() {
+      return message;
     }
 
     @Override
     public String toString() {
-      return "ResBody [approval_key=" + approval_key + "]";
+      return "ResBody [code=" + code + ", message=" + message + "]";
     }
   }
 }

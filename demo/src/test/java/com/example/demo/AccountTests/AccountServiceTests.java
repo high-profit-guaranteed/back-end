@@ -63,7 +63,14 @@ public class AccountServiceTests {
 
     // When
     memberService.join(member);
-    Account account = new Account(memberService.findByUid(member.getUid()).getId(), 50101503, "모의", "fake", appkey,
+
+    String uid = member.getUid();
+    if (uid == null) {
+      Assertions.fail(uid + " is null");
+      throw new IllegalStateException("uid is null");
+    }
+
+    Account account = new Account(memberService.findByUid(uid).getId(), 50101503, "모의", "fake", appkey,
         secretkey);
     accountService.join(account);
     account = accountService.findByAccountNumber(account.getAccountNumber());
@@ -85,7 +92,14 @@ public class AccountServiceTests {
     // When
     // Then
     memberService.join(member);
-    Account account = new Account(memberService.findByUid(member.getUid()).getId(), 50101503, "모의", "fake", appkey,
+
+    String uid = member.getUid();
+    if (uid == null) {
+      Assertions.fail(uid + " is null");
+      throw new IllegalStateException("uid is null");
+    }
+
+    Account account = new Account(memberService.findByUid(uid).getId(), 50101503, "모의", "fake", appkey,
         secretkey);
     accountService.join(account);
 
