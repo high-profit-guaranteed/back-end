@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.example.demo.domain.Account;
-import com.example.demo.kisAPI.classes.oauth2.Approval;
+import com.example.demo.kisAPI.classes.oauth2.tokenP;
 import com.example.demo.kisAPI.classes.uapi.overseas_stock.v1.trading.inquire_balance;
-import com.example.demo.kisAPI.dto.oauth2.Approval_DTO;
+import com.example.demo.kisAPI.dto.oauth2.tokenP_DTO;
 import com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO;
 import com.example.demo.repository.AccountRepository;
 
@@ -49,8 +49,8 @@ public class AccountService {
         .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
 
     try {
-      Approval_DTO.Res responseBody = new Approval(account.getAccountType().equals("fake"))
-          .post(Approval_DTO.Req.from(account));
+      tokenP_DTO.ResBody responseBody = new tokenP(account.getAccountType().equals("fake"))
+          .post(tokenP_DTO.ReqBody.from(account));
 
       updateAccessToken(accountId,
           responseBody.getAccess_token(),

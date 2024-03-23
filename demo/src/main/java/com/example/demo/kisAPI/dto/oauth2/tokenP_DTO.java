@@ -4,24 +4,11 @@ import org.springframework.lang.NonNull;
 
 import com.example.demo.domain.Account;
 
-public class Approval_DTO {
-  public static class ReqHeader {
-    @NonNull
-    private final String content_type;
+public class tokenP_DTO {
 
-    private ReqHeader(@NonNull String content_type) {
-      this.content_type = content_type;
-    }
-
-    public ReqHeader() {
-      this("application/json; utf-8");
-    }
-
-    public String getContent_type() {
-      return content_type;
-    }
-  }
-
+  /**
+   * 계좌 정보를 통해 접근 토큰을 받기 위한 요청 DTO
+   */
   public static class ReqBody {
     @NonNull
     private final String grant_type;
@@ -60,20 +47,43 @@ public class Approval_DTO {
     }
   }
 
+  /**
+   * 접근 토큰을 받기 위한 응답 DTO
+   */
   public static class ResBody {
-    private final String approval_key;
+    private final String access_token;
+    private final String token_type;
+    private final Long expires_in;
+    private final String access_token_token_expired;
 
-    public ResBody(String approval_key) {
-      this.approval_key = approval_key;
+    public ResBody(String access_token, String token_type, Long expires_in, String access_token_token_expired) {
+      this.access_token = access_token;
+      this.token_type = token_type;
+      this.expires_in = expires_in;
+      this.access_token_token_expired = access_token_token_expired;
     }
 
-    public String getApproval_key() {
-      return approval_key;
+    public String getAccess_token() {
+      return access_token;
+    }
+
+    public String getToken_type() {
+      return token_type;
+    }
+
+    public Long getExpires_in() {
+      return expires_in;
+    }
+
+    public String getAccess_token_token_expired() {
+      return access_token_token_expired;
     }
 
     @Override
     public String toString() {
-      return "ResBody [approval_key=" + approval_key + "]";
+      return "GetTokenResDto [access_token=" + access_token + ", token_type=" + token_type + ", expires_in="
+          + expires_in
+          + ", access_token_token_expired=" + access_token_token_expired + "]";
     }
   }
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.domain.Account;
 import com.example.demo.domain.Member;
 import com.example.demo.repository.MemberRepository;
 
@@ -47,10 +46,10 @@ public class MemberService {
       throw new IllegalStateException("회원 정보를 모두 입력해주세요.");
     }
 
-    if(validateUidDuplication(uid)) {
+    if (validateUidDuplication(uid)) {
       throw new IllegalStateException("이미 존재하는 회원입니다.");
     }
-    if(validateEmailDuplication(emailName+"@"+emailDomain)) {
+    if (validateEmailDuplication(emailName + "@" + emailDomain)) {
       throw new IllegalStateException("이미 존재하는 이메일입니다.");
     }
   }
@@ -74,11 +73,9 @@ public class MemberService {
     return memberRepository.existsByEmailNameAndEmailDomain(emailName, emailDomain);
   }
 
-
-  public List<Account> getAccounts(Long memberId) {
-    // TODO: Account 가져오기
-    return null;
-  }
+  // public List<Account> getAccounts(Long memberId) {
+  // return null;
+  // }
 
   public Member signin(@NonNull String uid, @NonNull String password) {
     Member member = memberRepository.findByUid(uid)
@@ -92,9 +89,4 @@ public class MemberService {
   public Member getSigninMember(@NonNull Long id) {
     return memberRepository.findById(id).orElse(null);
   }
-
-  // public void clearStore() {
-  //   memberRepository.clearStore();
-  // }
-
 }
