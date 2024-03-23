@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.example.demo.domain.Account;
 import com.example.demo.domain.Member;
+import com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO;
 import com.example.demo.service.AccountService;
 import com.example.demo.service.MemberService;
-import com.example.demo.service.DTO.GetBalanceResBodyDto;
 
 
 @Controller
@@ -95,7 +95,7 @@ public class AccountController {
       return "redirect:/home";
     }
 
-    GetBalanceResBodyDto balance = accountService.getAccountInfo(accountId);
+    inquire_balance_DTO.ResBody balance = accountService.getAccountInfo(accountId);
     model.addAttribute("balance", balance);
     
     return balance.toString();
