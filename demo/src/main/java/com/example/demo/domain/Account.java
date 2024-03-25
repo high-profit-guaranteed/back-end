@@ -17,8 +17,9 @@ public class Account {
 
   private Long memberId; // 회원 번호
   private int accountNumber; // 계좌 번호
+  private short accountProdCode; // 상품 코드
   private String accountName; // 계좌 이름 (개인 설정 가능한 계좌 이름)
-  private String accountType; // 계좌 유형 (실거래 계좌, 모의투자 계좌)
+  private boolean isVirtual; // 계좌 유형 (실거래 계좌, 모의투자 계좌)
   private String APP_KEY;
   private String APP_SECRET;
 
@@ -28,12 +29,13 @@ public class Account {
   public Account() {
   }
 
-  public Account(Long memberId, int accountNumber, String accountName, String accountType, String aPP_KEY,
+  public Account(Long memberId, int accountNumber, short accountProdCode, String accountName, boolean isVirtual, String aPP_KEY,
       String aPP_SECRET) {
     this.memberId = memberId;
     this.accountNumber = accountNumber;
+    this.accountProdCode = accountProdCode;
     this.accountName = accountName;
-    this.accountType = accountType;
+    this.isVirtual = isVirtual;
     APP_KEY = aPP_KEY;
     APP_SECRET = aPP_SECRET;
   }
@@ -62,6 +64,14 @@ public class Account {
     this.accountNumber = accountNumber;
   }
 
+  public short getAccountProdCode() {
+    return accountProdCode;
+  }
+
+  public void setAccountProdCode(short accountProdCode) {
+    this.accountProdCode = accountProdCode;
+  }
+
   public String getAccountName() {
     return accountName;
   }
@@ -70,12 +80,12 @@ public class Account {
     this.accountName = accountName;
   }
 
-  public String getAccountType() {
-    return accountType;
+  public boolean isVirtual() {
+    return isVirtual;
   }
 
-  public void setAccountType(String accountType) {
-    this.accountType = accountType;
+  public void setAccountType(boolean isVirtual) {
+    this.isVirtual = isVirtual;
   }
 
   public String getAPP_KEY() {

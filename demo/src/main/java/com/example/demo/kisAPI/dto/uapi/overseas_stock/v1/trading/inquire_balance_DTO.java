@@ -29,12 +29,10 @@ public class inquire_balance_DTO {
     @NonNull
     public static ReqHeader from(@NonNull Account account) {
       String tr_id;
-      if (account.getAccountType().equals("real")) {
-        tr_id = "TTTS3012R";
-      } else if (account.getAccountType().equals("fake")) {
+      if (account.isVirtual()) {
         tr_id = "VTTS3012R";
       } else {
-        throw new IllegalStateException("계좌 정보가 올바르지 않습니다.");
+        tr_id = "TTTS3012R";
       }
 
       String APP_KEY = account.getAPP_KEY();
@@ -90,16 +88,29 @@ public class inquire_balance_DTO {
     @NonNull
     public static ReqQueryParam from(@NonNull Account account) {
       String CANO = String.valueOf(account.getAccountNumber());
-      if (CANO == null || CANO.length() != 8) {
+      String ACNT_PRDT_CD = String.valueOf(account.getAccountProdCode());
+      if (CANO == null || CANO.length() != 8 || ACNT_PRDT_CD == null) {
         throw new IllegalStateException("계좌 정보가 올바르지 않습니다.");
       }
-      return new ReqQueryParam(CANO, "01", "NASD", "USD", "", "");
+      if (ACNT_PRDT_CD.length() == 1) {
+        ACNT_PRDT_CD = "0" + ACNT_PRDT_CD;
+      } else if (ACNT_PRDT_CD.length() != 2) {
+        throw new IllegalStateException("계좌 정보가 올바르지 않습니다.");
+      }
+      return new ReqQueryParam(CANO, ACNT_PRDT_CD, "NASD", "USD", "", "");
     }
 
-    public ReqQueryParam from(Account account, String CTX_AREA_FK200, String CTX_AREA_NK200) {
+    @NonNull
+    public static ReqQueryParam from(@NonNull Account account, @NonNull String CTX_AREA_FK200, @NonNull String CTX_AREA_NK200) {
       String CANO = String.valueOf(account.getAccountNumber());
-      if (CANO == null) {
-        return null;
+      String ACNT_PRDT_CD = String.valueOf(account.getAccountProdCode());
+      if (CANO == null || CANO.length() != 8 || ACNT_PRDT_CD == null) {
+        throw new IllegalStateException("계좌 정보가 올바르지 않습니다.");
+      }
+      if (ACNT_PRDT_CD.length() == 1) {
+        ACNT_PRDT_CD = "0" + ACNT_PRDT_CD;
+      } else if (ACNT_PRDT_CD.length() != 2) {
+        throw new IllegalStateException("계좌 정보가 올바르지 않습니다.");
       }
       return new ReqQueryParam(CANO, "01", "NASD", "USD", CTX_AREA_FK200,
           CTX_AREA_NK200);
@@ -210,10 +221,11 @@ public class inquire_balance_DTO {
 
     @Override
     public String toString() {
-      return "GetBalanceResBodyDto [rt_cd=" + rt_cd + ", msg_cd=" + msg_cd + ", msg1=" + msg1 + ", ctx_area_fk200="
-          + ctx_area_fk200 + ", ctx_area_nk200=" + ctx_area_nk200 + ", output1=" + output1 + ", output2=" + output2
-          + "]";
+      return "ResBody [rt_cd=" + rt_cd + ", msg_cd=" + msg_cd + ", msg1=" + msg1 + ", ctx_area_fk200=" + ctx_area_fk200
+          + ", ctx_area_nk200=" + ctx_area_nk200 + ", output1=" + output1 + ", output2=" + output2 + "]";
     }
+
+    
   }
 
   public static class ResBodyOutput1 {
@@ -316,13 +328,15 @@ public class inquire_balance_DTO {
 
     @Override
     public String toString() {
-      return "GetBalanceResBodyOutput1Dto [cano=" + cano + ", acnt_prdt_cd=" + acnt_prdt_cd + ", prdt_type_cd="
-          + prdt_type_cd + ", ovrs_pdno=" + ovrs_pdno + ", ovrs_item_name=" + ovrs_item_name + ", frcr_evlu_pfls_amt="
+      return "ResBodyOutput1 [cano=" + cano + ", acnt_prdt_cd=" + acnt_prdt_cd + ", prdt_type_cd=" + prdt_type_cd
+          + ", ovrs_pdno=" + ovrs_pdno + ", ovrs_item_name=" + ovrs_item_name + ", frcr_evlu_pfls_amt="
           + frcr_evlu_pfls_amt + ", evlu_pfls_rt=" + evlu_pfls_rt + ", pchs_avg_pric=" + pchs_avg_pric
           + ", ovrs_cblc_qty=" + ovrs_cblc_qty + ", now_pric2=" + now_pric2 + ", tr_crcy_cd=" + tr_crcy_cd
           + ", ovrs_excg_cd=" + ovrs_excg_cd + ", loan_type_cd=" + loan_type_cd + ", loan_dt=" + loan_dt + ", expd_dt="
           + expd_dt + "]";
     }
+
+    
   }
 
   public static class ResBodyOutput2 {
@@ -388,11 +402,12 @@ public class inquire_balance_DTO {
 
     @Override
     public String toString() {
-      return "GetBalanceResBodyOutput2Dto [frcr_pchs_amt1=" + frcr_pchs_amt1 + ", ovrs_rlzt_pfls_amt="
-          + ovrs_rlzt_pfls_amt + ", ovrs_tot_pfls=" + ovrs_tot_pfls + ", rlzt_erng_rt=" + rlzt_erng_rt
-          + ", tot_evlu_pfls_amt=" + tot_evlu_pfls_amt + ", tot_pftrt=" + tot_pftrt + ", frcr_buy_amt_smtl1="
-          + frcr_buy_amt_smtl1 + ", ovrs_rlzt_pfls_amt2=" + ovrs_rlzt_pfls_amt2 + ", frcr_buy_amt_smtl2="
-          + frcr_buy_amt_smtl2 + "]";
+      return "ResBodyOutput2 [frcr_pchs_amt1=" + frcr_pchs_amt1 + ", ovrs_rlzt_pfls_amt=" + ovrs_rlzt_pfls_amt
+          + ", ovrs_tot_pfls=" + ovrs_tot_pfls + ", rlzt_erng_rt=" + rlzt_erng_rt + ", tot_evlu_pfls_amt="
+          + tot_evlu_pfls_amt + ", tot_pftrt=" + tot_pftrt + ", frcr_buy_amt_smtl1=" + frcr_buy_amt_smtl1
+          + ", ovrs_rlzt_pfls_amt2=" + ovrs_rlzt_pfls_amt2 + ", frcr_buy_amt_smtl2=" + frcr_buy_amt_smtl2 + "]";
     }
+
+    
   }
 }

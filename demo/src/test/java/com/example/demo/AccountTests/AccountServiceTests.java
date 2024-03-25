@@ -70,7 +70,7 @@ public class AccountServiceTests {
       throw new IllegalStateException("uid is null");
     }
 
-    Account account = new Account(memberService.findByUid(uid).getId(), 50101503, "모의", "fake", appkey,
+    Account account = new Account(memberService.findByUid(uid).getId(), 50101503, (short)1, "모의", true, appkey,
         secretkey);
     accountService.join(account);
     account = accountService.findByAccountNumber(account.getAccountNumber());
@@ -78,7 +78,7 @@ public class AccountServiceTests {
     // Then
     Assertions.assertThat(account.getAccountNumber()).isEqualTo(50101503);
     Assertions.assertThat(account.getAccountName()).isEqualTo("모의");
-    Assertions.assertThat(account.getAccountType()).isEqualTo("fake");
+    Assertions.assertThat(account.isVirtual()).isTrue();
     Assertions.assertThat(account.getAPP_KEY()).isEqualTo(appkey);
     Assertions.assertThat(account.getAPP_SECRET()).isEqualTo(secretkey);
   }
@@ -99,7 +99,7 @@ public class AccountServiceTests {
       throw new IllegalStateException("uid is null");
     }
 
-    Account account = new Account(memberService.findByUid(uid).getId(), 50101503, "모의", "fake", appkey,
+    Account account = new Account(memberService.findByUid(uid).getId(), 50101503, (short)1, "모의", true, appkey,
         secretkey);
     accountService.join(account);
 

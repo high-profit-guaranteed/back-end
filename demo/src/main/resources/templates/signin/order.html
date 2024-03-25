@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <title>주식 주문 화면</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <style>
+    table {
+      width: 100%;
+      border: 2px solid black;
+      border-collapse: collapse;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>주식 주문 화면</h1>
+  <h2>계좌 ID</h2>
+  <p th:text="${account.id}"></p>
+
+  <h2>종목 조회</h2>
+  <form action="/order" method="get">
+    <div>
+      <label for="isOverseas">해외 주식 조회</label>
+      <input type="checkbox" id="isOverseas" name="isOverseas" />
+    </div>
+    <div>
+      <label for="stockCode">종목 코드</label>
+      <input type="text" id="stockCode" name="stockCode" placeholder="종목 코드를 입력해주세요." />
+    </div>
+    <button type="submit">종목 조회</button>
+  </form>
+
+  <h2>주식 주문</h2>
+  <form action="/order" method="post">
+    <div>
+      <label for="isOverseas">해외 주식 주문</label>
+      <input type="checkbox" id="isOverseas" name="isOverseas" />
+    </div>
+    <div>
+      <label for="orderType">주문 유형</label>
+      <select id="orderType" name="orderType">
+        <option value="buy">매수</option>
+        <option value="sell">매도</option>
+      </select>
+    </div>
+    <div>
+      <label for="stockCode">종목 코드</label>
+      <input type="text" id="stockCode" name="stockCode" placeholder="종목 코드를 입력해주세요." th:value="${stockCode}?${stockCode}:''"/>
+    </div>
+    <div>
+      <label for="orderPrice">주문 가격</label>
+      <input type="text" id="orderPrice" name="orderPrice" placeholder="주문 가격을 입력해주세요." th:value="${stockPrice}?${stockPrice}:''"/>
+    </div>
+    <div>
+      <label for="orderAmount">주문 수량</label>
+      <input type="text" id="orderAmount" name="orderAmount" placeholder="주문 수량을 입력해주세요." />
+    </div>
+    <div>
+      <label for="isMarketPrice">시장가</label>
+      <input type="checkbox" id="isMarketPrice" name="isMarketPrice" />
+    </div>
+    <button type="submit">주문</button>
+
+  </form>
+</body>
+
+</html>
