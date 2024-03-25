@@ -3,14 +3,17 @@ package com.example.demo.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.example.demo.domain.Account;
 import com.example.demo.kisAPI.classes.oauth2.tokenP;
-import com.example.demo.kisAPI.classes.uapi.overseas_stock.v1.trading.inquire_balance;
+import com.example.demo.kisAPI.classes.uapi.domestic_stock.v1.trading.order_cash;
+import com.example.demo.kisAPI.classes.uapi.overseas_stock.v1.trading.order;
 import com.example.demo.kisAPI.dto.oauth2.tokenP_DTO;
-import com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO;
+import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.order_cash_DTO;
+import com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.order_DTO;
 import com.example.demo.repository.AccountRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +52,7 @@ public class AccountService {
         .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
 
     try {
-      tokenP_DTO.ResBody responseBody = new tokenP(account.getAccountType().equals("fake"))
+      tokenP_DTO.ResBody responseBody = new tokenP(account.isVirtual())
           .post(tokenP_DTO.ReqBody.from(account));
 
       updateAccessToken(accountId,
@@ -77,17 +80,85 @@ public class AccountService {
   }
 
   /**
-   * 계좌 정보를 통해 해외주식 잔고를 조회합니다.
+   * 계좌 정보를 통해 국내주식 잔고를 조회합니다.
    */
-  public inquire_balance_DTO.ResBody getAccountInfo(Long accountId) {
+  public com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.inquire_balance_DTO.ResBody getAccountInfoDomestic(
+      Long accountId) {
     Account account = accountRepository.findById(accountId)
         .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
 
     try {
       // GET 요청
-      inquire_balance_DTO.ResBody responseBody = new inquire_balance(account.getAccountType().equals("fake"))
-          .get(inquire_balance_DTO.ReqHeader.from(account),
-              inquire_balance_DTO.ReqQueryParam.from(account));
+      com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.inquire_balance_DTO.ResBody responseBody = new com.example.demo.kisAPI.classes.uapi.domestic_stock.v1.trading.inquire_balance(
+          account.isVirtual())
+          .get(com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.inquire_balance_DTO.ReqHeader.from(account),
+              com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.inquire_balance_DTO.ReqQueryParam
+                  .from(account));
+
+      return responseBody;
+    } catch (WebClientResponseException e) {
+      log.error("error: {}", e.getResponseBodyAsString());
+      return null;
+    }
+  }
+
+  /**
+   * 계좌 정보를 통해 해외주식 잔고를 조회합니다.
+   */
+  public com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO.ResBody getAccountInfoOverseas(
+      Long accountId) {
+    Account account = accountRepository.findById(accountId)
+        .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
+
+    try {
+      // GET 요청
+      com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO.ResBody responseBody = new com.example.demo.kisAPI.classes.uapi.overseas_stock.v1.trading.inquire_balance(
+          account.isVirtual())
+          .get(com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO.ReqHeader.from(account),
+              com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO.ReqQueryParam
+                  .from(account));
+
+      return responseBody;
+    } catch (WebClientResponseException e) {
+      log.error("error: {}", e.getResponseBodyAsString());
+      return null;
+    }
+  }
+
+  /**
+   * 계좌 정보를 통해 국내주식을 주문합니다.
+   */
+  public order_cash_DTO.ResBody orderDomestic(Long accountId,
+      @NonNull order_cash_DTO.ReqBody reqBody, boolean isBuy) {
+    Account account = accountRepository.findById(accountId)
+        .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
+
+    try {
+      // POST 요청
+      order_cash_DTO.ResBody responseBody = new order_cash(
+          account.isVirtual())
+          .post(order_cash_DTO.ReqHeader.from(account, isBuy), reqBody);
+
+      return responseBody;
+    } catch (WebClientResponseException e) {
+      log.error("error: {}", e.getResponseBodyAsString());
+      return null;
+    }
+  }
+
+  /**
+   * 계좌 정보를 통해 해외주식을 주문합니다.
+   */
+  public order_DTO.ResBody orderOverseas(Long accountId,
+      @NonNull order_DTO.ReqBody reqBody, boolean isBuy) {
+    Account account = accountRepository.findById(accountId)
+        .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
+
+    try {
+      // POST 요청
+      order_DTO.ResBody responseBody = new order(
+          account.isVirtual())
+          .post(order_DTO.ReqHeader.from(account, isBuy), reqBody);
 
       return responseBody;
     } catch (WebClientResponseException e) {
