@@ -20,7 +20,7 @@ public class inquire_balance_DTO {
 
     private ReqHeader(@NonNull String authorization, @NonNull String appkey, @NonNull String appsecret,
         @NonNull String tr_id) {
-      this.authorization = authorization;
+      this.authorization = "Bearer " + authorization;
       this.appkey = appkey;
       this.appsecret = appsecret;
       this.tr_id = tr_id;
@@ -37,11 +37,12 @@ public class inquire_balance_DTO {
 
       String APP_KEY = account.getAPP_KEY();
       String APP_SECRET = account.getAPP_SECRET();
-      if (APP_KEY == null || APP_SECRET == null) {
+      String AUTHORIZATION = account.getAccessToken();
+      if (APP_KEY == null || APP_SECRET == null || AUTHORIZATION == null) {
         throw new IllegalStateException("계좌 정보가 올바르지 않습니다.");
       }
 
-      return new ReqHeader("Bearer " + account.getAccessToken(), APP_KEY, APP_SECRET, tr_id);
+      return new ReqHeader(AUTHORIZATION, APP_KEY, APP_SECRET, tr_id);
     }
 
     public String getAuthorization() {

@@ -21,6 +21,7 @@ public class order_cash implements order_cash_Interface {
   @Override
   @NonNull
   public ResBody post(@NonNull ReqHeader reqHeader, @NonNull ReqBody reqBody) {
+
     WebClient webClient = WebClient.builder().baseUrl(this.url).defaultHeaders(header -> {
       header.set("content-type", reqHeader.getContent_type());
       header.set("authorization", reqHeader.getAuthorization());
@@ -30,16 +31,16 @@ public class order_cash implements order_cash_Interface {
     }).build();
 
     ResBody responseBody = webClient.post()
-        .bodyValue(reqBody)
+        .bodyValue(reqBody.toMap())
         .retrieve()
         .bodyToMono(ResBody.class)
         .block();
-    
+
     if (responseBody == null) {
       throw new IllegalStateException("응답이 올바르지 않습니다.");
     }
 
     return responseBody;
   }
-  
+
 }

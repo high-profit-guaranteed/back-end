@@ -30,7 +30,7 @@ public class order implements order_Interface {
     }).build();
 
     ResBody responseBody = webClient.post()
-        .bodyValue(reqBody)
+        .bodyValue(reqBody.toMap())
         .retrieve()
         .bodyToMono(ResBody.class)
         .block();

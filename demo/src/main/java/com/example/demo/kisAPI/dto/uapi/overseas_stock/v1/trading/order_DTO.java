@@ -1,5 +1,8 @@
 package com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.lang.NonNull;
 
 import com.example.demo.domain.Account;
@@ -29,7 +32,7 @@ public class order_DTO {
     private ReqHeader(@NonNull String content_type, @NonNull String authorization, @NonNull String appkey,
         @NonNull String appsecret, @NonNull String tr_id, String tr_cont) {
       this.content_type = content_type;
-      this.authorization = authorization;
+      this.authorization = "Bearer " + authorization;
       this.appkey = appkey;
       this.appsecret = appsecret;
       this.tr_id = tr_id;
@@ -211,7 +214,19 @@ public class order_DTO {
       return ORD_DVSN;
     }
 
-    
+    @NonNull
+    public Map<String, String> toMap() {
+      Map<String, String> map = new HashMap<>();
+      map.put("CANO", CANO);
+      map.put("ACNT_PRDT_CD", ACNT_PRDT_CD);
+      map.put("OVRS_EXCG_CD", OVRS_EXCG_CD);
+      map.put("PDNO", PDNO);
+      map.put("ORD_QTY", ORD_QTY);
+      map.put("OVRS_ORD_UNPR", OVRS_ORD_UNPR);
+      map.put("ORD_SVR_DVSN_CD", ORD_SVR_DVSN_CD);
+      map.put("ORD_DVSN", ORD_DVSN);
+      return map;
+    }
   }
 
   public static class ResHeader {

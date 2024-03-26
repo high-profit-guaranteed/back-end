@@ -38,16 +38,26 @@
   </form>
 
   <h2>주식 주문</h2>
-  <form action="/order" method="post">
+  <form th:action="@{/order(accountId=${account.id})}" method="post">
     <div>
-      <label for="isOverseas">해외 주식 주문</label>
-      <input type="checkbox" id="isOverseas" name="isOverseas" />
+      <label for="orderPriceType">주문 유형 1</label>
+      <select id="orderPriceType" name="orderPriceType">
+        <option value="limit">지정가</option>
+        <option value="market">시장가</option>
+      </select>
     </div>
     <div>
-      <label for="orderType">주문 유형</label>
+      <label for="orderType">주문 유형 2</label>
       <select id="orderType" name="orderType">
         <option value="buy">매수</option>
         <option value="sell">매도</option>
+      </select>
+    </div>
+    <div>
+      <label for="orderMarketType">주문 유형 3</label>
+      <select id="orderMarketType" name="orderMarketType">
+        <option value="domestic">국내 주식</option>
+        <option value="overseas">해외 주식</option>
       </select>
     </div>
     <div>
