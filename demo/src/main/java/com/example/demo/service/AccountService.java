@@ -133,6 +133,8 @@ public class AccountService {
     Account account = accountRepository.findById(accountId)
         .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
 
+    log.info(reqBody.toString());
+
     try {
       // POST 요청
       order_cash_DTO.ResBody responseBody = new order_cash(

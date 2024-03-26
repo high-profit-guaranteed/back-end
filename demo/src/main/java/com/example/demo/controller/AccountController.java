@@ -14,9 +14,12 @@ import com.example.demo.domain.Member;
 import com.example.demo.service.AccountService;
 import com.example.demo.service.MemberService;
 
+import io.micrometer.common.lang.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 
 
+@Slf4j
 @Controller
 public class AccountController {
   private final AccountService accountService;
@@ -107,7 +110,7 @@ public class AccountController {
   }
   
   @GetMapping("/order")
-  public String orderInfo(@RequestParam("accountId") Long accountId, @RequestParam("stockCode") String stockCode, @RequestParam("isOverseas") boolean isOverseas, @SessionAttribute(name = "id", required = false) Long id, Model model) {
+  public String orderInfo(@RequestParam("accountId") Long accountId, @RequestParam("stockCode") String stockCode, @SessionAttribute(name = "id", required = false) Long id, Model model) {
     if (accountId == null || id == null) {
       return "redirect:/signin";
     }
@@ -123,13 +126,13 @@ public class AccountController {
 
     model.addAttribute("account", account);
     
-    if(stockCode == null) {
-      return "/order";
+    if(stockCode == null || stockCode.isEmpty()) {
+      return "/signin/order";
     } else {
       model.addAttribute("stockCode", stockCode);
 
       // TODO: stockCode에 해당하는 주식 정보 조회
-      return "/order";
+      return "/signin/order";
     }
   }
 
@@ -150,16 +153,24 @@ public class AccountController {
     }
 
     String response;
+    String stockCode = form.getStockCode();
+    log.info(stockCode);
+    String orderAmount = String.valueOf(form.getOrderAmount());
+    String orderPrice = String.valueOf(form.getOrderPrice());
+    if(stockCode == null || stockCode.isEmpty() || orderAmount == null || orderAmount.isEmpty() || orderPrice == null || orderPrice.isEmpty()) {
+      return "주식 코드, 주문 수량, 주문 가격을 입력해주세요.";
+    }
 
     if(form.isOverseas()) {
-      com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.order_DTO.ResBody resBody = accountService.orderOverseas(accountId, com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.order_DTO.ReqBody.from(account, form.getStockCode(), String.valueOf(form.getOrderAmount()), String.valueOf(form.getOrderPrice()), form.isBuy()), form.isBuy());
+      com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.order_DTO.ResBody resBody = accountService.orderOverseas(accountId, com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.order_DTO.ReqBody.from(account, stockCode, orderAmount, orderPrice, form.isBuy()), form.isBuy());
       response = resBody.toString();
     } else {
       com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.order_cash_DTO.ResBody resBody;
+
       if(form.isMarketPrice()) {
-        resBody = accountService.orderDomestic(accountId, com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.order_cash_DTO.ReqBody.from(account, form.getStockCode(), String.valueOf(form.getOrderAmount())), form.isBuy());
+        resBody = accountService.orderDomestic(accountId, com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.order_cash_DTO.ReqBody.from(account, stockCode, orderAmount), form.isBuy());
       } else {
-        resBody = accountService.orderDomestic(accountId, com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.order_cash_DTO.ReqBody.from(account, form.getStockCode(), String.valueOf(form.getOrderAmount())), form.isBuy());
+        resBody = accountService.orderDomestic(accountId, com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.order_cash_DTO.ReqBody.from(account, stockCode, orderAmount, orderPrice), form.isBuy());
       }
       response = resBody.toString();
     }
@@ -170,22 +181,24 @@ public class AccountController {
 }
 
 class OrderForm {
+  @NonNull
   private final String stockCode;
   private final long orderAmount;
   private final long orderPrice;
   private final String orderType;
-  private final boolean isOverseas;
-  private final boolean isMarketPrice;
+  private final String orderPriceType;
+  private final String orderMarketType;
 
-  public OrderForm(String stockCode, long orderAmount, long orderPrice, String orderType, boolean isOverseas, boolean isMarketPrice) {
+  public OrderForm(String stockCode, long orderAmount, long orderPrice, String orderType, String orderPriceType, String orderMarketType) {
     this.stockCode = stockCode;
     this.orderAmount = orderAmount;
     this.orderPrice = orderPrice;
     this.orderType = orderType;
-    this.isOverseas = isOverseas;
-    this.isMarketPrice = isMarketPrice;
+    this.orderPriceType = orderPriceType;
+    this.orderMarketType = orderMarketType;
   }
 
+  @NonNull
   public String getStockCode() {
     return stockCode;
   }
@@ -202,12 +215,20 @@ class OrderForm {
     return orderType;
   }
 
+  public String getOrderPriceType() {
+    return orderPriceType;
+  }
+
+  public String getOrderMarketType() {
+    return orderMarketType;
+  }
+
   public boolean isOverseas() {
-    return isOverseas;
+    return orderMarketType.equals("overseas") ? true : false;
   }
 
   public boolean isMarketPrice() {
-    return isMarketPrice;
+    return orderPriceType.equals("market") ? true : false;
   }
 
   public boolean isBuy() {

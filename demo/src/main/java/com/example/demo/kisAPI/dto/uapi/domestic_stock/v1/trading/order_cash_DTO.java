@@ -1,6 +1,8 @@
 package com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.lang.NonNull;
 
@@ -62,7 +64,7 @@ gt_uid	Global UID	String	N	32	[법인 필수] 거래고유번호로 사용하므
     private ReqHeader(@NonNull String content_type, @NonNull String authorization, @NonNull String appkey,
         @NonNull String appsecret, @NonNull String tr_id, String tr_cont) {
       this.content_type = content_type;
-      this.authorization = authorization;
+      this.authorization = "Bearer " + authorization;
       this.appkey = appkey;
       this.appsecret = appsecret;
       this.tr_id = tr_id;
@@ -230,6 +232,18 @@ ALGO_NO	알고리즘번호	String	N	10	미사용 */
 
     public String getORD_UNPR() {
       return ORD_UNPR;
+    }
+
+    @NonNull
+    public Map<String, String> toMap() {
+      Map<String, String> map = new HashMap<String, String>();
+      map.put("CANO", CANO);
+      map.put("ACNT_PRDT_CD", ACNT_PRDT_CD);
+      map.put("PDNO", PDNO);
+      map.put("ORD_DVSN", ORD_DVSN);
+      map.put("ORD_QTY", ORD_QTY);
+      map.put("ORD_UNPR", ORD_UNPR);
+      return map;
     }
   }
 
