@@ -1,7 +1,6 @@
 package com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.lang.NonNull;
@@ -297,13 +296,13 @@ output	응답상세	Array	Y
   public static class ResBody {
     private final String rt_cd;
     private final String msg_cd;
-    private final String msg;
-    private final List<ResBodyOuput> output;
+    private final String msg1;
+    private final ResBodyOuput output;
 
-    public ResBody(String rt_cd, String msg_cd, String msg, List<ResBodyOuput> output) {
+    public ResBody(String rt_cd, String msg_cd, String msg, ResBodyOuput output) {
       this.rt_cd = rt_cd;
       this.msg_cd = msg_cd;
-      this.msg = msg;
+      this.msg1 = msg;
       this.output = output;
     }
 
@@ -315,17 +314,17 @@ output	응답상세	Array	Y
       return msg_cd;
     }
 
-    public String getMsg() {
-      return msg;
+    public String getMsg1() {
+      return msg1;
     }
 
-    public List<ResBodyOuput> getOutput() {
+    public ResBodyOuput getOutput() {
       return output;
     }
 
     @Override
     public String toString() {
-      return "ResBody [rt_cd=" + rt_cd + ", msg_cd=" + msg_cd + ", msg=" + msg + ", output=" + output + "]";
+      return "ResBody [rt_cd=" + rt_cd + ", msg_cd=" + msg_cd + ", msg1=" + msg1 + ", output=" + output + "]";
     }
   }
 

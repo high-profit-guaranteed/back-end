@@ -111,7 +111,7 @@ CREATE TABLE account (
 	account_number INT UNSIGNED NOT NULL UNIQUE,
 	account_prod_code TINYINT UNSIGNED NOT NULL,
 	account_name VARCHAR(16) NOT NULL,
-	account_type BOOLEAN NOT NULL,
+	is_virtual BOOLEAN NOT NULL,
 	APP_KEY VARCHAR(36) NOT NULL,
 	APP_SECRET VARCHAR(180) NOT NULL,
 	access_token VARCHAR(350),
@@ -127,6 +127,19 @@ CREATE TABLE account (
 	email_domain VARCHAR(255) NOT NULL
 )</string>
 		<string>DROP TABLE IF EXISTS member, account</string>
+		<string>CREATE TABLE account (
+	id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE PRIMARY KEY,
+	member_id BIGINT UNSIGNED NOT NULL,
+	account_number INT UNSIGNED NOT NULL UNIQUE,
+	account_prod_code TINYINT UNSIGNED NOT NULL,
+	account_name VARCHAR(16) NOT NULL,
+	account_type BOOLEAN NOT NULL,
+	APP_KEY VARCHAR(36) NOT NULL,
+	APP_SECRET VARCHAR(180) NOT NULL,
+	access_token VARCHAR(350),
+	access_token_expired VARCHAR(50),
+	FOREIGN KEY(member_id) REFERENCES member(id)
+)</string>
 		<string>DROP TABLE IF EXISTS member, account;
 CREATE TABLE member (
 	id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE PRIMARY KEY,
