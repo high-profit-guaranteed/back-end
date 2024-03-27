@@ -45,8 +45,7 @@
         <th>APP KEY</th>
         <th>접근토큰 발급</th>
         <th>계좌 조회</th>
-        <th>국내주식 주문</th>
-        <th>해외주식 주문</th>
+        <th>주식 주문</th>
         <th>접근토큰</th>
         <th>접근토큰 파기</th>
       </tr>
@@ -66,10 +65,7 @@
           <a th:href="@{/getAccountInfo/{id}(id=${account.id})}">계좌 조회</a>
         </td>
         <td>
-          <a th:href="@{/order(accountId=${account.id},type='domestic',stockCode='')}">국내주식 주문</a>
-        </td>
-        <td>
-          <a th:href="@{/order(accountId=${account.id},type='overseas',stockCode='')}">해외주식 주문</a>
+          <a th:href="@{/order(accountId=${account.id})}">국내주식 주문</a>
         </td>
         <td th:text="${account.accessToken}"></td>
         <td th:text="${account.accessTokenExpired}"></td>
