@@ -17,8 +17,6 @@ import com.example.demo.service.MemberService;
 import io.micrometer.common.lang.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
-
-
 @Slf4j
 @Controller
 public class AccountController {
@@ -57,7 +55,8 @@ public class AccountController {
       return "redirect:/signin";
     }
 
-    Account account = new Account(id, Integer.parseInt(form.getAccountNumber()), Short.parseShort(form.getAccountProdCode()), form.getAccountName(),
+    Account account = new Account(id, Integer.parseInt(form.getAccountNumber()),
+        Short.parseShort(form.getAccountProdCode()), form.getAccountName(),
         form.isVirtual(), form.getAPP_KEY(), form.getAPP_SECRET());
 
     accountService.join(account);
@@ -66,7 +65,8 @@ public class AccountController {
   }
 
   @GetMapping("/getAccessToken/{accountId}")
-  public String accessToken(@PathVariable("accountId") Long accountId, @SessionAttribute(name = "id", required = false) Long id, Model model) {
+  public String accessToken(@PathVariable("accountId") Long accountId,
+      @SessionAttribute(name = "id", required = false) Long id, Model model) {
     if (accountId == null || id == null) {
       return "redirect:/signin";
     }
@@ -86,7 +86,8 @@ public class AccountController {
 
   @ResponseBody
   @GetMapping("/getAccountInfo/{accountId}")
-  public String getAccountInfo(@PathVariable("accountId") Long accountId, @SessionAttribute(name = "id", required = false) Long id, Model model) {
+  public String getAccountInfo(@PathVariable("accountId") Long accountId,
+      @SessionAttribute(name = "id", required = false) Long id, Model model) {
     if (accountId == null || id == null) {
       return "redirect:/signin";
     }
@@ -100,17 +101,22 @@ public class AccountController {
       return "redirect:/home";
     }
 
-    com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.inquire_balance_DTO.ResBody balanceDomestic = accountService.getAccountInfoDomestic(accountId);
+    com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.inquire_balance_DTO.ResBody balanceDomestic = accountService
+        .getAccountInfoDomestic(accountId);
     model.addAttribute("balanceDomestic", balanceDomestic);
 
-    com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO.ResBody balanceOverseas = accountService.getAccountInfoOverseas(accountId);
+    com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO.ResBody balanceOverseas = accountService
+        .getAccountInfoOverseas(accountId);
     model.addAttribute("balanceOverseas", balanceOverseas);
-    
-    return "<h2>국내 주식 잔고:</h2>" + balanceDomestic.toString() + ",</br></br><h2>해외 주식 잔고:</h2>" + balanceOverseas.toString();
+
+    return "<h2>국내 주식 잔고:</h2>" + balanceDomestic.toString() + ",</br></br><h2>해외 주식 잔고:</h2>"
+        + balanceOverseas.toString();
   }
-  
+
   @GetMapping("/order")
-  public String orderInfo(@RequestParam("accountId") Long accountId, @RequestParam("stockCode") String stockCode, @SessionAttribute(name = "id", required = false) Long id, Model model) {
+  public String orderInfo(@RequestParam("accountId") Long accountId,
+      @RequestParam("priceMarketType") String priceMarketType, @RequestParam("stockCode") String stockCode,
+      @SessionAttribute(name = "id", required = false) Long id, Model model) {
     if (accountId == null || id == null) {
       return "redirect:/signin";
     }
@@ -125,20 +131,27 @@ public class AccountController {
     }
 
     model.addAttribute("account", account);
-    
-    if(stockCode == null || stockCode.isEmpty()) {
+
+    if (stockCode == null || stockCode.isEmpty() || priceMarketType == null || priceMarketType.isEmpty()) {
       return "/signin/order";
     } else {
       model.addAttribute("stockCode", stockCode);
+      model.addAttribute("priceMarketType", priceMarketType);
+      if (priceMarketType.equals("domestic")) {
+        return "/signin/order";
+      } else {
+        String response = accountService.getPriceOverseas(account.getId(), stockCode).toString();
+        model.addAttribute("stockInfo", response);
 
-      // TODO: stockCode에 해당하는 주식 정보 조회
-      return "/signin/order";
+        return "/signin/order";
+      }
     }
   }
 
   @ResponseBody
   @PostMapping("/order")
-  public String order(@RequestParam("accountId") Long accountId, OrderForm form, @SessionAttribute(name = "id", required = false) Long id) {
+  public String order(@RequestParam("accountId") Long accountId, OrderForm form,
+      @SessionAttribute(name = "id", required = false) Long id) {
     if (accountId == null || id == null) {
       return "redirect:/signin";
     }
@@ -157,27 +170,36 @@ public class AccountController {
     log.info(stockCode);
     String orderAmount = String.valueOf(form.getOrderAmount());
     String orderPrice = String.valueOf(form.getOrderPrice());
-    if(stockCode == null || stockCode.isEmpty() || orderAmount == null || orderAmount.isEmpty() || orderPrice == null || orderPrice.isEmpty()) {
+    if (stockCode == null || stockCode.isEmpty() || orderAmount == null || orderAmount.isEmpty() || orderPrice == null
+        || orderPrice.isEmpty()) {
       return "주식 코드, 주문 수량, 주문 가격을 입력해주세요.";
     }
 
-    if(form.isOverseas()) {
-      com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.order_DTO.ResBody resBody = accountService.orderOverseas(accountId, com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.order_DTO.ReqBody.from(account, stockCode, orderAmount, orderPrice, form.isBuy()), form.isBuy());
+    if (form.isOverseas()) {
+      com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.order_DTO.ResBody resBody = accountService
+          .orderOverseas(accountId, com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.order_DTO.ReqBody
+              .from(account, stockCode, orderAmount, orderPrice, form.isBuy()), form.isBuy());
       response = resBody.toString();
     } else {
       com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.order_cash_DTO.ResBody resBody;
 
-      if(form.isMarketPrice()) {
-        resBody = accountService.orderDomestic(accountId, com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.order_cash_DTO.ReqBody.from(account, stockCode, orderAmount), form.isBuy());
+      if (form.isMarketPrice()) {
+        resBody = accountService.orderDomestic(accountId,
+            com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.order_cash_DTO.ReqBody.from(account, stockCode,
+                orderAmount),
+            form.isBuy());
       } else {
-        resBody = accountService.orderDomestic(accountId, com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.order_cash_DTO.ReqBody.from(account, stockCode, orderAmount, orderPrice), form.isBuy());
+        resBody = accountService.orderDomestic(accountId,
+            com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.order_cash_DTO.ReqBody.from(account, stockCode,
+                orderAmount, orderPrice),
+            form.isBuy());
       }
       response = resBody.toString();
     }
-    
+
     return response;
   }
-  
+
 }
 
 class OrderForm {
@@ -189,7 +211,8 @@ class OrderForm {
   private final String orderPriceType;
   private final String orderMarketType;
 
-  public OrderForm(String stockCode, long orderAmount, long orderPrice, String orderType, String orderPriceType, String orderMarketType) {
+  public OrderForm(String stockCode, long orderAmount, long orderPrice, String orderType, String orderPriceType,
+      String orderMarketType) {
     this.stockCode = stockCode;
     this.orderAmount = orderAmount;
     this.orderPrice = orderPrice;
@@ -244,7 +267,8 @@ class AccountForm {
   private final String APP_KEY;
   private final String APP_SECRET;
 
-  public AccountForm(String accountNumber, String accountProdCode, String accountName, boolean isVirtual, String APP_KEY, String APP_SECRET) {
+  public AccountForm(String accountNumber, String accountProdCode, String accountName, boolean isVirtual,
+      String APP_KEY, String APP_SECRET) {
     this.accountNumber = accountNumber;
     this.accountProdCode = accountProdCode;
     this.accountName = accountName;
@@ -276,5 +300,4 @@ class AccountForm {
   public String getAPP_SECRET() {
     return APP_SECRET;
   }
-
 }

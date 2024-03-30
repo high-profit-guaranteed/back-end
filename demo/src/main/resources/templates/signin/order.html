@@ -27,15 +27,23 @@
   <h2>종목 조회</h2>
   <form action="/order" method="get">
     <div>
-      <label for="isOverseas">해외 주식 조회</label>
-      <input type="checkbox" id="isOverseas" name="isOverseas" />
+      <input type="hidden" id="accountId" name="accountId" th:value="${account.id}" />
+    </div>
+    <div>
+      <label for="priceMarketType">조회 유형</label>
+      <select id="priceMarketType" name="priceMarketType">
+        <option value="domestic">국내 주식</option>
+        <option value="overseas">해외 주식</option>
+      </select>
     </div>
     <div>
       <label for="stockCode">종목 코드</label>
-      <input type="text" id="stockCode" name="stockCode" placeholder="종목 코드를 입력해주세요." />
+      <input type="text" id="stockCode" name="stockCode" placeholder="종목 코드를 입력해주세요." th:value="${stockCode}?${stockCode}:''/>
     </div>
     <button type="submit">종목 조회</button>
   </form>
+
+  <p th:text="${stockInfo}?${stockInfo}:''">조회 할 종목을 입력해주세요.</p>
 
   <h2>주식 주문</h2>
   <form th:action="@{/order(accountId=${account.id})}" method="post">
