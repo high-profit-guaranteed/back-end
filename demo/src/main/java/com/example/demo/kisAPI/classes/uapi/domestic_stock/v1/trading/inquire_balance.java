@@ -51,5 +51,4 @@ public class inquire_balance implements inquire_balance_Interface {
 
     return resBody;
   }
-  
 }

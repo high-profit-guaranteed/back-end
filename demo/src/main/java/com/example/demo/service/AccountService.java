@@ -13,6 +13,7 @@ import com.example.demo.kisAPI.classes.uapi.domestic_stock.v1.trading.order_cash
 import com.example.demo.kisAPI.classes.uapi.overseas_stock.v1.trading.order;
 import com.example.demo.kisAPI.dto.oauth2.tokenP_DTO;
 import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.order_cash_DTO;
+import com.example.demo.kisAPI.dto.uapi.overseas_price.v1.quotations.price_DTO;
 import com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.order_DTO;
 import com.example.demo.repository.AccountRepository;
 
@@ -161,6 +162,24 @@ public class AccountService {
       order_DTO.ResBody responseBody = new order(
           account.isVirtual())
           .post(order_DTO.ReqHeader.from(account, isBuy), reqBody);
+
+      return responseBody;
+    } catch (WebClientResponseException e) {
+      log.error("error: {}", e.getResponseBodyAsString());
+      return null;
+    }
+  }
+
+  public price_DTO.ResBody getPriceOverseas(Long accountId, @NonNull String code) {
+    Account account = accountRepository.findById(accountId)
+        .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
+
+    try {
+      // GET 요청
+      price_DTO.ResBody responseBody = new com.example.demo.kisAPI.classes.uapi.overseas_price.v1.quotations.price(
+          account.isVirtual())
+          .get(price_DTO.ReqHeader.from(account),
+              price_DTO.ReqQueryParam.from("NAS", code));
 
       return responseBody;
     } catch (WebClientResponseException e) {

@@ -65,7 +65,7 @@
           <a th:href="@{/getAccountInfo/{id}(id=${account.id})}">계좌 조회</a>
         </td>
         <td>
-          <a th:href="@{/order(accountId=${account.id})}">국내주식 주문</a>
+          <a th:href="@{/order(accountId=${account.id}, priceMarketType='', stockCode='')}">주식 주문</a>
         </td>
         <td th:text="${account.accessToken}"></td>
         <td th:text="${account.accessTokenExpired}"></td>
