@@ -9,9 +9,12 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import com.example.demo.domain.Account;
 import com.example.demo.kisAPI.classes.oauth2.tokenP;
+import com.example.demo.kisAPI.classes.uapi.domestic_stock.v1.quotations.inquire_price;
 import com.example.demo.kisAPI.classes.uapi.domestic_stock.v1.trading.order_cash;
+import com.example.demo.kisAPI.classes.uapi.overseas_price.v1.quotations.price;
 import com.example.demo.kisAPI.classes.uapi.overseas_stock.v1.trading.order;
 import com.example.demo.kisAPI.dto.oauth2.tokenP_DTO;
+import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.quotations.inquire_price_DTO;
 import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.order_cash_DTO;
 import com.example.demo.kisAPI.dto.uapi.overseas_price.v1.quotations.price_DTO;
 import com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.order_DTO;
@@ -176,10 +179,28 @@ public class AccountService {
 
     try {
       // GET 요청
-      price_DTO.ResBody responseBody = new com.example.demo.kisAPI.classes.uapi.overseas_price.v1.quotations.price(
+      price_DTO.ResBody responseBody = new price(
           account.isVirtual())
           .get(price_DTO.ReqHeader.from(account),
               price_DTO.ReqQueryParam.from("NAS", code));
+
+      return responseBody;
+    } catch (WebClientResponseException e) {
+      log.error("error: {}", e.getResponseBodyAsString());
+      return null;
+    }
+  }
+
+  public inquire_price_DTO.ResBody getPriceDomestic(Long accountId, @NonNull String code) {
+    Account account = accountRepository.findById(accountId)
+        .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
+
+    try {
+      // GET 요청
+      inquire_price_DTO.ResBody responseBody = new inquire_price(
+          account.isVirtual())
+          .get(inquire_price_DTO.ReqHeader.from(account),
+              inquire_price_DTO.ReqQueryParam.from(code));
 
       return responseBody;
     } catch (WebClientResponseException e) {
