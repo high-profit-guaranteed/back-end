@@ -137,14 +137,13 @@ public class AccountController {
     } else {
       model.addAttribute("stockCode", stockCode);
       model.addAttribute("priceMarketType", priceMarketType);
-      if (priceMarketType.equals("domestic")) {
-        return "/signin/order";
-      } else {
-        String response = accountService.getPriceOverseas(account.getId(), stockCode).toString();
-        model.addAttribute("stockInfo", response);
 
-        return "/signin/order";
-      }
+      String response = priceMarketType.equals("domestic")
+          ? accountService.getPriceDomestic(account.getId(), stockCode).toString()
+          : accountService.getPriceOverseas(account.getId(), stockCode).toString();
+
+      model.addAttribute("stockInfo", response);
+      return "/signin/order";
     }
   }
 
