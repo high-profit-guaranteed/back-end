@@ -1,5 +1,9 @@
 package com.example.demo.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -87,7 +91,7 @@ public class AccountController {
   @ResponseBody
   @GetMapping("/getAccountInfo/{accountId}")
   public String getAccountInfo(@PathVariable("accountId") Long accountId,
-      @SessionAttribute(name = "id", required = false) Long id, Model model) {
+      @SessionAttribute(name = "id", required = false) Long id) {
     if (accountId == null || id == null) {
       return "redirect:/signin";
     }
@@ -101,16 +105,54 @@ public class AccountController {
       return "redirect:/home";
     }
 
-    com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.inquire_balance_DTO.ResBody balanceDomestic = accountService
-        .getAccountInfoDomestic(accountId);
-    model.addAttribute("balanceDomestic", balanceDomestic);
+    String balanceDomestic = accountService.getAccountInfoDomestic(accountId).toString();
+    String balanceOverseas = accountService.getAccountInfoOverseas(accountId).toString();
 
-    com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO.ResBody balanceOverseas = accountService
-        .getAccountInfoOverseas(accountId);
-    model.addAttribute("balanceOverseas", balanceOverseas);
+    return "<a href='/history?accountId=" + accountId + "'><h1>거래내역</h1></a><h2>국내 주식 잔고:</h2>" + balanceDomestic
+        + ",</br></br><h2>해외 주식 잔고:</h2>"
+        + balanceOverseas;
+  }
 
-    return "<h2>국내 주식 잔고:</h2>" + balanceDomestic.toString() + ",</br></br><h2>해외 주식 잔고:</h2>"
-        + balanceOverseas.toString();
+  @ResponseBody
+  @GetMapping("/history")
+  public String history(@RequestParam("accountId") Long accountId,
+      @SessionAttribute(name = "id", required = false) Long id) {
+    if (accountId == null || id == null) {
+      return "redirect:/signin";
+    }
+    Member member = memberService.getSigninMember(id);
+    if (member == null) {
+      return "redirect:/signin";
+    }
+
+    Account account = accountService.findOne(accountId);
+    if (account == null) {
+      return "redirect:/home";
+    }
+
+    // 일주일간 거래내역 조회
+    Date now = new Date();
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(now);
+    cal.add(Calendar.DAY_OF_MONTH, -30);
+    SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+    String start = format.format(new Date(cal.getTimeInMillis()));
+    String end = format.format(now);
+
+    log.info(start);
+    log.info(end);
+    // String start = "";
+    // String end = "";
+
+    if (start == null || end == null) {
+      throw new IllegalArgumentException("날짜를 입력해주세요.");
+    }
+
+    String historyDomestic = accountService.getHistoryDomestic(accountId, start, end).toString();
+    String historyOverseas = accountService.getHistoryOverseas(accountId, start, end).toString();
+
+    return "<h2>국내 주식 거래내역:</h2>" + historyDomestic + ",</br></br><h2>해외 주식 거래내역:</h2>"
+        + historyOverseas;
   }
 
   @GetMapping("/order")
