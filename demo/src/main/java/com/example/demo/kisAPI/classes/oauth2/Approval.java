@@ -1,5 +1,6 @@
 package com.example.demo.kisAPI.classes.oauth2;
 
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.lang.NonNull;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -8,6 +9,10 @@ import com.example.demo.kisAPI.dto.oauth2.Approval_DTO.ReqBody;
 import com.example.demo.kisAPI.dto.oauth2.Approval_DTO.ReqHeader;
 import com.example.demo.kisAPI.dto.oauth2.Approval_DTO.ResBody;
 import com.example.demo.kisAPI.interfaces.oauth2.Approval_Interface;
+
+import io.netty.handler.logging.LogLevel;
+import reactor.netty.http.client.HttpClient;
+import reactor.netty.transport.logging.AdvancedByteBufFormat;
 
 public class Approval implements Approval_Interface {
 
@@ -23,7 +28,9 @@ public class Approval implements Approval_Interface {
   public ResBody post(@NonNull ReqHeader reqHeader, @NonNull ReqBody reqBody) {
     WebClient webClient = WebClient.builder().baseUrl(this.url).defaultHeaders(header -> {
       header.set("content-type", reqHeader.getContent_type());
-    }).build();
+    })
+    .clientConnector(new ReactorClientHttpConnector(HttpClient.create().wiretap("reactor.netty.http.client.HttpClient", LogLevel.DEBUG, AdvancedByteBufFormat.TEXTUAL)))
+    .build();
 
     ResBody responseBody = webClient.post()
         .bodyValue(reqBody)

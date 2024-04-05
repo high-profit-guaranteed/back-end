@@ -88,6 +88,26 @@ public class AccountController {
     return "redirect:/home";
   }
 
+  @GetMapping("/getApprovalKey/{accountId}")
+  public String getApprovalKey(@PathVariable("accountId") Long accountId,
+      @SessionAttribute(name = "id", required = false) Long id, Model model) {
+    if (accountId == null || id == null) {
+      return "redirect:/signin";
+    }
+    Member member = memberService.getSigninMember(id);
+    if (member == null) {
+      return "redirect:/signin";
+    }
+
+    Account account = accountService.findOne(accountId);
+    if (account == null) {
+      return "redirect:/home";
+    }
+
+    accountService.getApproval(accountId);
+    return "redirect:/home";
+  }
+
   @ResponseBody
   @GetMapping("/getAccountInfo/{accountId}")
   public String getAccountInfo(@PathVariable("accountId") Long accountId,
