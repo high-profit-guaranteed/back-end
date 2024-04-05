@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.example.demo.domain.Account;
+import com.example.demo.kisAPI.classes.oauth2.Approval;
 import com.example.demo.kisAPI.classes.oauth2.tokenP;
 import com.example.demo.kisAPI.classes.uapi.domestic_stock.v1.quotations.inquire_price;
 import com.example.demo.kisAPI.classes.uapi.domestic_stock.v1.trading.inquire_daily_ccld;
@@ -15,6 +16,7 @@ import com.example.demo.kisAPI.classes.uapi.domestic_stock.v1.trading.order_cash
 import com.example.demo.kisAPI.classes.uapi.overseas_price.v1.quotations.price;
 import com.example.demo.kisAPI.classes.uapi.overseas_stock.v1.trading.inquire_ccnl;
 import com.example.demo.kisAPI.classes.uapi.overseas_stock.v1.trading.order;
+import com.example.demo.kisAPI.dto.oauth2.Approval_DTO;
 import com.example.demo.kisAPI.dto.oauth2.tokenP_DTO;
 import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.quotations.inquire_price_DTO;
 import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.inquire_daily_ccld_DTO;
@@ -243,5 +245,46 @@ public class AccountService {
       log.error("error: {}", e.getResponseBodyAsString());
       return null;
     }
+  }
+
+  // public String getApproval(Long accountId) {
+  //   Account account = accountRepository.findById(accountId)
+  //       .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
+
+  //   try {
+  //     // GET 요청
+  //     Approval_DTO.ResBody responseBody = new Approval(account.isVirtual())
+  //         .post(new Approval_DTO.ReqHeader(), Approval_DTO.ReqBody.from(account));
+  //     updateApprovalKey(accountId, responseBody.getApproval_key());
+      
+  //     return responseBody.getApproval_key();
+  //   } catch (WebClientResponseException e) {
+  //     log.error("error: {}", e.getResponseBodyAsString());
+  //     return null;
+  //   }
+  // }
+
+  public void getApproval(Long accountId) {
+    Account account = accountRepository.findById(accountId)
+        .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
+
+    try {
+      // GET 요청
+      Approval_DTO.ResBody responseBody = new Approval(account.isVirtual())
+          .post(new Approval_DTO.ReqHeader(), Approval_DTO.ReqBody.from(account));
+      updateApprovalKey(accountId, responseBody.getApproval_key());
+      
+      return;
+    } catch (WebClientResponseException e) {
+      log.error("error: {}", e.getResponseBodyAsString());
+      return;
+    }
+  }
+
+  private void updateApprovalKey(Long accountId, String approvalKey) {
+    Account updatedAccount = accountRepository.findById(accountId)
+        .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
+    updatedAccount.setApproval_key(approvalKey);
+    accountRepository.save(updatedAccount);
   }
 }

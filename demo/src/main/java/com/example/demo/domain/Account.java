@@ -25,6 +25,7 @@ public class Account {
 
   private String accessToken;
   private String accessTokenExpired;
+  private String approval_key;
 
   public Account() {
   }
@@ -118,5 +119,13 @@ public class Account {
 
   public void setAccessTokenExpired(String accessTokenExpired) {
     this.accessTokenExpired = accessTokenExpired;
+  }
+
+  public String getApproval_key() {
+    return approval_key;
+  }
+
+  public void setApproval_key(String approval_key) {
+    this.approval_key = approval_key;
   }
 }

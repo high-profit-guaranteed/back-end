@@ -4,6 +4,9 @@ import org.springframework.lang.NonNull;
 
 import com.example.demo.domain.Account;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 public class Approval_DTO {
   public static class ReqHeader {
     @NonNull
@@ -28,12 +31,12 @@ public class Approval_DTO {
     @NonNull
     private final String appkey;
     @NonNull
-    private final String appsecret;
+    private final String secretkey;
 
-    private ReqBody(@NonNull String grant_type, @NonNull String appkey, @NonNull String appsecret) {
+    private ReqBody(@NonNull String grant_type, @NonNull String appkey, @NonNull String secretkey) {
       this.grant_type = grant_type;
       this.appkey = appkey;
-      this.appsecret = appsecret;
+      this.secretkey = secretkey;
     }
 
     @NonNull
@@ -55,25 +58,14 @@ public class Approval_DTO {
       return appkey;
     }
 
-    public String getAppsecret() {
-      return appsecret;
+    public String getSecretkey() {
+      return secretkey;
     }
   }
 
+  @Data
+  @NoArgsConstructor
   public static class ResBody {
-    private final String approval_key;
-
-    public ResBody(String approval_key) {
-      this.approval_key = approval_key;
-    }
-
-    public String getApproval_key() {
-      return approval_key;
-    }
-
-    @Override
-    public String toString() {
-      return "ResBody [approval_key=" + approval_key + "]";
-    }
+    private String approval_key;
   }
 }

@@ -48,6 +48,8 @@
         <th>주식 주문</th>
         <th>접근토큰</th>
         <th>접근토큰 파기</th>
+        <th>실시간 접속키</th>
+        <th>실시간 접속키 발급</th>
       </tr>
     </thead>
     <tbody>
@@ -69,6 +71,10 @@
         </td>
         <td th:text="${account.accessToken}"></td>
         <td th:text="${account.accessTokenExpired}"></td>
+        <td th:text="${account.approval_key}"></td>
+        <td>
+          <a th:href="@{/getApprovalKey/{id}(id=${account.id})}">실시간 접속키 발급</a>
+        </td>
       </tr>
     </tbody>
   </table>

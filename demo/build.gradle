@@ -32,6 +32,7 @@ dependencies {
 	implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.4.1'
 	implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
 	// implementation group: 'org.eclipse.jetty', name: 'jetty-reactive-httpclient', version: '4.0.3'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 }
 
 tasks.named('test') {
