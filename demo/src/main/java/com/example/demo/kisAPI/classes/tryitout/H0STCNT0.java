@@ -1,69 +1,106 @@
 package com.example.demo.kisAPI.classes.tryitout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.lang.NonNull;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.WebSocketMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.client.WebSocketClient;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
 
 import com.example.demo.kisAPI.dto.tryitout.H0STCNT0_DTO.ReqBody;
 import com.example.demo.kisAPI.dto.tryitout.H0STCNT0_DTO.ReqHeader;
-import com.example.demo.kisAPI.dto.tryitout.H0STCNT0_DTO.ResBody;
 import com.example.demo.kisAPI.interfaces.tryitout.H0STCNT0_Interface;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@EnableWebSocket
 public class H0STCNT0 implements H0STCNT0_Interface {
 
-  @Override
   @NonNull
-  public ResBody post(@NonNull ReqHeader reqHeader, @NonNull ReqBody reqBody) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'post'");
+  private final String url;
+  @NonNull
+  private final String uriVariable;
+
+  public H0STCNT0(boolean isVirtual) {
+    this.url = isVirtual ? "ws://ops.koreainvestment.com:31000" : "ws://ops.koreainvestment.com:21000";
+    this.uriVariable = "tryitout/H0STCNT0";
   }
 
-  // @Configuration
-  // @EnableWebSocket
-  // @RequiredArgsConstructor
-  // public class WebSocketConfig implements WebSocketConfigurer {
+  @Override
+  public void post(@NonNull ReqHeader reqHeader, @NonNull ReqBody reqBody) {
 
-  //   @NonNull
-  //   private final WebSocketHandler webSocketHandler;
+    WebSocketClient client = new StandardWebSocketClient();
 
-  //   @Override
-  //   public void registerWebSocketHandlers(@NonNull WebSocketHandlerRegistry registry) {
-  //     registry.addHandler(webSocketHandler, "/ws");
-  //   }
-  // }
+    log.info("Connecting to the server");
 
-  // @Component
-  // public class WebSocketHandler extends TextWebSocketHandler {
+    String request = "{\"header\":{\"approval_key\":\"" + reqHeader.getApproval_key() +
+        "\",\"custtype\":\"" + reqHeader.getCusttype() +
+        "\",\"tr_type\":\"" + reqHeader.getTr_type() + "\",\"content-type\":\"" + reqHeader.getContent_type() +
+        "\"},\"body\":{\"input\":{\"tr_id\":\"" + reqBody.getTr_id() + "\",\"tr_key\":\"" + reqBody.getTr_key()
+        + "\"}}}";
 
-  //   private static final ConcurrentHashMap<String, WebSocketSession> CLIENTS = new ConcurrentHashMap<String, WebSocketSession>();
+    client.execute(new WebSocketClientHandler(request), this.url, this.uriVariable);
+  }
 
-  //   @Override
-  //   public void afterConnectionEstablished(@NonNull WebSocketSession session) throws Exception {
-  //     CLIENTS.put(session.getId(), session);
-  //   }
+  class WebSocketClientHandler implements WebSocketHandler {
+    private final String requestStr;
 
-  //   @Override
-  //   public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-  //     CLIENTS.remove(session.getId());
-  //   }
+    public WebSocketClientHandler(String request) {
+      super();
+      this.requestStr = request;
+    }
 
-  //   @Override
-  //   protected void handleTextMessage(@NonNull WebSocketSession session, @NonNull TextMessage message) throws Exception {
-  //     String id = session.getId(); // 메시지를 보낸 아이디
-  //     CLIENTS.entrySet().forEach(arg -> {
-  //       if (!arg.getKey().equals(id)) { // 같은 아이디가 아니면 메시지를 전달합니다.
-  //         try {
-  //           arg.getValue().sendMessage(message);
-  //         } catch (IOException e) {
-  //           e.printStackTrace();
-  //         }
-  //       }
-  //     });
-  //   }
-  // }
+    @Override
+    public void afterConnectionEstablished(@NonNull WebSocketSession session) throws Exception {
+      log.info("Sending message: " + requestStr);
+      session.sendMessage(new TextMessage(requestStr));
+    }
 
-  // @Override
-  // @NonNull
-  // public ResBody post(@NonNull ReqHeader reqHeader, @NonNull ReqBody reqBody) {
+    @Override
+    public void handleMessage(@NonNull WebSocketSession session, @NonNull WebSocketMessage<?> message)
+        throws Exception {
+      // log.info("Received message: " + message.getPayload());
+      if (message.getPayload().toString().contains("\"tr_id\":\"PINGPONG\"")) {
+        session.sendMessage(new TextMessage("Pong"));
+      }
+      if (message.getPayload().toString().startsWith("0")) {
+        List<String> list = new ArrayList<String>();
+        for (String str : message.getPayload().toString().split("\\|")) {
+          list.add(str);
+        }
+        String data = list.remove(list.size() - 1);
+        list.add("data:");
+        for (String str : data.split("\\^")) {
+          list.add(" "+str);
+        }
+        log.info("Received message:\n");
+        for (String str : list) {
+          log.info(str);
+        }
+      }
+    }
 
-  // }
+    @Override
+    public void handleTransportError(@NonNull WebSocketSession session, @NonNull Throwable exception) throws Exception {
+      log.error("Transport error: " + exception.getMessage());
+    }
 
+    @Override
+    public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull CloseStatus closeStatus)
+        throws Exception {
+      log.info("Connection closed: " + closeStatus.getCode());
+    }
+
+    @Override
+    public boolean supportsPartialMessages() {
+      return false;
+    }
+  }
 }
