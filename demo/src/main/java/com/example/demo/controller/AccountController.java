@@ -19,9 +19,9 @@ import com.example.demo.service.AccountService;
 import com.example.demo.service.MemberService;
 
 import io.micrometer.common.lang.NonNull;
-import lombok.extern.slf4j.Slf4j;
+// import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+// @Slf4j
 @Controller
 public class AccountController {
   private final AccountService accountService;
@@ -159,8 +159,8 @@ public class AccountController {
     String start = format.format(new Date(cal.getTimeInMillis()));
     String end = format.format(now);
 
-    log.info(start);
-    log.info(end);
+    // log.info(start);
+    // log.info(end);
     // String start = "";
     // String end = "";
 
@@ -204,7 +204,45 @@ public class AccountController {
           ? accountService.getPriceDomestic(account.getId(), stockCode).toString()
           : accountService.getPriceOverseas(account.getId(), stockCode).toString();
 
+      if (priceMarketType.equals("domestic")) {
+        accountService.wsDomestic(accountId, stockCode);
+      }
+
       model.addAttribute("stockInfo", response);
+      return "/signin/order";
+    }
+  }
+
+  @GetMapping("/realtime")
+  public String orderRealtimeInfo(@RequestParam("accountId") Long accountId,
+      @RequestParam("priceMarketType") String priceMarketType, @RequestParam("stockCode") String stockCode,
+      @SessionAttribute(name = "id", required = false) Long id, Model model) {
+    if (accountId == null || id == null) {
+      return "redirect:/signin";
+    }
+    Member member = memberService.getSigninMember(id);
+    if (member == null) {
+      return "redirect:/signin";
+    }
+
+    Account account = accountService.findOne(accountId);
+    if (account == null) {
+      return "redirect:/home";
+    }
+
+    model.addAttribute("account", account);
+
+    if (stockCode == null || stockCode.isEmpty() || priceMarketType == null || priceMarketType.isEmpty()) {
+      return "/signin/order";
+    } else {
+      model.addAttribute("stockCode", stockCode);
+      model.addAttribute("priceMarketType", priceMarketType);
+
+      if (priceMarketType.equals("domestic")) {
+        accountService.wsDomestic(accountId, stockCode);
+      }
+
+      // model.addAttribute("stockInfo", response);
       return "/signin/order";
     }
   }
@@ -228,7 +266,7 @@ public class AccountController {
 
     String response;
     String stockCode = form.getStockCode();
-    log.info(stockCode);
+    // log.info(stockCode);
     String orderAmount = String.valueOf(form.getOrderAmount());
     String orderPrice = String.valueOf(form.getOrderPrice());
     if (stockCode == null || stockCode.isEmpty() || orderAmount == null || orderAmount.isEmpty() || orderPrice == null
