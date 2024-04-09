@@ -4,6 +4,7 @@ import org.springframework.lang.NonNull;
 
 import com.example.demo.domain.Account;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -142,6 +143,7 @@ MRKT_TRTM_CLS_CODE	임의종료구분코드	String	Y	1
 VI_STND_PRC	정적VI발동기준가	Number	Y	4	
  */
   @Data
+  @AllArgsConstructor
   @NoArgsConstructor
   public static class ResBody {
     private String MKSC_SHRN_ISCD;
