@@ -11,6 +11,7 @@ import com.example.demo.domain.Account;
 import com.example.demo.kisAPI.classes.oauth2.Approval;
 import com.example.demo.kisAPI.classes.oauth2.tokenP;
 import com.example.demo.kisAPI.classes.tryitout.H0STCNT0;
+import com.example.demo.kisAPI.classes.tryitout.HDFSCNT0;
 import com.example.demo.kisAPI.classes.uapi.domestic_stock.v1.quotations.inquire_price;
 import com.example.demo.kisAPI.classes.uapi.domestic_stock.v1.trading.inquire_daily_ccld;
 import com.example.demo.kisAPI.classes.uapi.domestic_stock.v1.trading.order_cash;
@@ -20,6 +21,7 @@ import com.example.demo.kisAPI.classes.uapi.overseas_stock.v1.trading.order;
 import com.example.demo.kisAPI.dto.oauth2.Approval_DTO;
 import com.example.demo.kisAPI.dto.oauth2.tokenP_DTO;
 import com.example.demo.kisAPI.dto.tryitout.H0STCNT0_DTO;
+import com.example.demo.kisAPI.dto.tryitout.HDFSCNT0_DTO;
 import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.quotations.inquire_price_DTO;
 import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.inquire_daily_ccld_DTO;
 import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.order_cash_DTO;
@@ -301,5 +303,18 @@ public class AccountService {
     test.post(reqHeader, reqBody);
 
     log.info("wsDomestic");
+  }
+
+  public void wsOverseas(Long accountId, @NonNull String code, boolean isDay) {
+    Account account = accountRepository.findById(accountId)
+        .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
+
+    HDFSCNT0_DTO.ReqHeader reqHeader = HDFSCNT0_DTO.ReqHeader.from(account, true);
+    HDFSCNT0_DTO.ReqBody reqBody = HDFSCNT0_DTO.ReqBody.from(code, isDay);
+
+    HDFSCNT0 test = new HDFSCNT0();
+    test.post(reqHeader, reqBody);
+
+    log.info("wsOverseas");
   }
 }
