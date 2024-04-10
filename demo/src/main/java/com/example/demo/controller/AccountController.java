@@ -240,6 +240,8 @@ public class AccountController {
 
       if (priceMarketType.equals("domestic")) {
         accountService.wsDomestic(accountId, stockCode);
+      } else if (priceMarketType.equals("overseas")) {
+        accountService.wsOverseas(accountId, stockCode, true);
       }
 
       // model.addAttribute("stockInfo", response);
