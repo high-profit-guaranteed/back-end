@@ -35,6 +35,13 @@ jobs:
       # - name: Build
       #   run: npm run build
 
+      - name: Write File
+        uses: DamianReeves/write-file-action@v1.3
+        with:
+          path: ./demo/src/main/resources/properties/env.properties
+          contents: database.password=${{ secrets.DATABASE_PASSWORD }}
+          write-mode: overwrite
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3.1.0
         with:
