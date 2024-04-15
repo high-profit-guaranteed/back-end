@@ -13,11 +13,13 @@
 			<key>database</key>
 			<string>duckling</string>
 			<key>host</key>
-			<string>127.0.0.1</string>
+			<string>duckling-db.ctequww0k7iy.ap-northeast-2.rds.amazonaws.com</string>
 			<key>kcid</key>
-			<string>-2675133150622100100</string>
+			<string>-7788739572337710710</string>
 			<key>name</key>
-			<string>Duckling</string>
+			<string>duckling-db</string>
+			<key>port</key>
+			<integer>3306</integer>
 			<key>rdbms_type</key>
 			<string>mysql</string>
 			<key>sslCACertFileLocation</key>
@@ -43,30 +45,41 @@
 		<dict>
 			<key>connectionEncoding</key>
 			<string>utf8mb4</string>
+			<key>contentFilter</key>
+			<dict/>
 			<key>contentPageNumber</key>
 			<integer>1</integer>
 			<key>contentSelection</key>
 			<data>
 			YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0
 			b3BYJG9iamVjdHMSAAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRk
-			YXRhgAGoCwwXGBkaHiVVJG51bGzTDQ4PEBMWV05TLmtleXNaTlMu
-			b2JqZWN0c1YkY2xhc3OiERKAAoADohQVgASABYAHVHR5cGVUcm93
-			c18QHVNlbGVjdGlvbkRldGFpbFR5cGVOU0luZGV4U2V00hsPHB1c
-			TlNSYW5nZUNvdW50EACABtIfICEiWiRjbGFzc25hbWVYJGNsYXNz
-			ZXNaTlNJbmRleFNldKIjJFpOU0luZGV4U2V0WE5TT2JqZWN00h8g
-			JidcTlNEaWN0aW9uYXJ5oiYoWE5TT2JqZWN0AAgAEQAaACQAKQAy
-			ADcASQBMAFEAUwBcAGIAaQBxAHwAgwCGAIgAigCNAI8AkQCTAJgA
-			nQC9AMIAzwDRANMA2ADjAOwA9wD6AQUBDgETASABIwAAAAAAAAIB
-			AAAAAAAAACkAAAAAAAAAAAAAAAAAAAEs
+			YXRhgAGtCwwZGhscHSEoLDA1OlUkbnVsbNMNDg8QFBhXTlMua2V5
+			c1pOUy5vYmplY3RzViRjbGFzc6MREhOAAoADgASjFRYXgAWABoAI
+			gAxUdHlwZVRyb3dzVGtleXNfECZTZWxlY3Rpb25EZXRhaWxUeXBl
+			UHJpbWFyeUtleWVkRGV0YWlsc9MNDg8eHyCgoIAH0iIjJCVaJGNs
+			YXNzbmFtZVgkY2xhc3Nlc18QE05TTXV0YWJsZURpY3Rpb25hcnmj
+			JCYnXE5TRGljdGlvbmFyeVhOU09iamVjdNIODykroSqACYAL0g8t
+			Li9ZTlMuc3RyaW5ngApSaWTSIiMxMl8QD05TTXV0YWJsZVN0cmlu
+			Z6MxMzRYTlNTdHJpbmdYTlNPYmplY3TSIiM2N15OU011dGFibGVB
+			cnJheaM2ODlXTlNBcnJheVhOU09iamVjdNIiIyY7oiY8WE5TT2Jq
+			ZWN0AAgAEQAaACQAKQAyADcASQBMAFEAUwBhAGcAbgB2AIEAiACM
+			AI4AkACSAJYAmACaAJwAngCjAKgArQDWAN0A3gDfAOEA5gDxAPoB
+			EAEUASEBKgEvATEBMwE1AToBRAFGAUkBTgFgAWQBbQF2AXsBigGO
+			AZYBnwGkAacAAAAAAAACAQAAAAAAAAA9AAAAAAAAAAAAAAAAAAAB
+			sA==
 			</data>
 			<key>contentSortColIsAsc</key>
 			<true/>
 			<key>contentViewport</key>
-			<string>{{0, 0}, {694, 444}}</string>
+			<string>{{0, 0}, {734, 469}}</string>
 			<key>isToolbarVisible</key>
 			<true/>
 			<key>queries</key>
-			<string>
+			<string>ALTER DATABASE duckling
+CHARACTER SET = 'utf8mb4'
+COLLATE = 'utf8mb4_general_ci';
+
+
 DROP TABLE IF EXISTS member, account;
 
 CREATE TABLE member (
@@ -92,6 +105,8 @@ CREATE TABLE account (
 	approval_key VARCHAR(286),
 	FOREIGN KEY(member_id) REFERENCES member(id)
 );</string>
+			<key>table</key>
+			<string>member</string>
 			<key>view</key>
 			<string>SP_VIEW_CUSTOMQUERY</string>
 			<key>windowVerticalDividerPosition</key>
@@ -117,6 +132,7 @@ CREATE TABLE account (
 	APP_SECRET VARCHAR(180) NOT NULL,
 	access_token VARCHAR(350),
 	access_token_expired VARCHAR(50),
+	approval_key VARCHAR(286),
 	FOREIGN KEY(member_id) REFERENCES member(id)
 )</string>
 		<string>CREATE TABLE member (
@@ -134,7 +150,29 @@ CREATE TABLE account (
 	account_number INT UNSIGNED NOT NULL UNIQUE,
 	account_prod_code TINYINT UNSIGNED NOT NULL,
 	account_name VARCHAR(16) NOT NULL,
-	account_type BOOLEAN NOT NULL,
+	is_virtual BOOLEAN NOT NULL,
+	APP_KEY VARCHAR(36) NOT NULL,
+	APP_SECRET VARCHAR(180) NOT NULL,
+	access_token VARCHAR(350),
+	access_token_expired VARCHAR(50),
+	FOREIGN KEY(member_id) REFERENCES member(id)
+)</string>
+		<string>DROP TABLE IF EXISTS member, account;
+CREATE TABLE member (
+	id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE PRIMARY KEY,
+	pw VARCHAR(20) NOT NULL,
+	uid VARCHAR(16) NOT NULL UNIQUE,
+	member_name VARCHAR(64) NOT NULL,
+	email_name VARCHAR(64) NOT NULL,
+	email_domain VARCHAR(255) NOT NULL
+);
+CREATE TABLE account (
+	id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE PRIMARY KEY,
+	member_id BIGINT UNSIGNED NOT NULL,
+	account_number INT UNSIGNED NOT NULL UNIQUE,
+	account_prod_code TINYINT UNSIGNED NOT NULL,
+	account_name VARCHAR(16) NOT NULL,
+	is_virtual BOOLEAN NOT NULL,
 	APP_KEY VARCHAR(36) NOT NULL,
 	APP_SECRET VARCHAR(180) NOT NULL,
 	access_token VARCHAR(350),
@@ -162,11 +200,14 @@ CREATE TABLE account (
 	access_token_expired VARCHAR(50),
 	FOREIGN KEY(member_id) REFERENCES member(id)
 )</string>
+		<string>ALTER DATABASE duckling
+CHARACTER SET = 'utf8mb4'
+COLLATE = 'utf8mb4_general_ci'</string>
 	</array>
 	<key>rdbms_type</key>
 	<string>mysql</string>
 	<key>rdbms_version</key>
-	<string>11.3.2-MariaDB</string>
+	<string>5.5.5-10.11.6-MariaDB</string>
 	<key>version</key>
 	<integer>1</integer>
 </dict>

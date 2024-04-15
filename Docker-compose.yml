@@ -1,0 +1,10 @@
+version: '3'
+services:
+  duckling-backend:
+    build:
+      context: ./demo/build/libs
+      dockerfile: Dockerfile
+      # npm run build시 환경 변수 참조가 안되어 args로 전달하고, Dockerfile에서 변수로 사용한다.
+      # args:
+    ports:
+      - '80:8080'
