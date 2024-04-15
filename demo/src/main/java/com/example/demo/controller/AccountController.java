@@ -209,7 +209,7 @@ public class AccountController {
       }
 
       model.addAttribute("stockInfo", response);
-      return "/signin/order";
+      return "signin/order";
     }
   }
 
@@ -233,7 +233,7 @@ public class AccountController {
     model.addAttribute("account", account);
 
     if (stockCode == null || stockCode.isEmpty() || priceMarketType == null || priceMarketType.isEmpty()) {
-      return "/signin/order";
+      return "signin/order";
     } else {
       model.addAttribute("stockCode", stockCode);
       model.addAttribute("priceMarketType", priceMarketType);
@@ -245,7 +245,7 @@ public class AccountController {
       }
 
       // model.addAttribute("stockInfo", response);
-      return "/signin/order";
+      return "signin/order";
     }
   }
 

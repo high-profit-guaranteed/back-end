@@ -22,7 +22,7 @@ public class NewsController {
   public String getNewsList(Model model) {
     List<News> newsList = newsService.findNews();
     model.addAttribute("newsList", newsList);
-    return "/newsList";
+    return "newsList";
   }
 
   @PostMapping("/news")
