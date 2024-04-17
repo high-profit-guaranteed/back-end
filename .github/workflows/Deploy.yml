@@ -33,12 +33,24 @@ jobs:
           contents: database.password=${{ secrets.DATABASE_PASSWORD }}
           write-mode: overwrite
 
-      - name: Gradle Build Action
-        uses: gradle/gradle-build-action@v3.3.0
-        with:
-          arguments: build
-          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
-          build-root-directory: ./demo
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        
+        # with:
+        #   arguments: build
+        #   cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
+        #   build-root-directory: ./demo
+        
+      - name: Build with Gradle
+        working-directory: ./demo
+        run: ./gradlew build
+
+      # - name: Gradle Build Action
+      #   uses: gradle/gradle-build-action@v3.3.0
+      #   with:
+      #     arguments: build
+      #     cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
+      #     build-root-directory: ./demo
       
       # - name: Build with Gradle
       #   uses: gradle/actions@v3.3.0
