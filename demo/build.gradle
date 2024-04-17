@@ -33,6 +33,7 @@ dependencies {
 	implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
 	// implementation group: 'org.eclipse.jetty', name: 'jetty-reactive-httpclient', version: '4.0.3'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'com.google.code.findbugs:jsr305:3.0.2'
 }
 
 tasks.named('test') {
