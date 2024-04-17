@@ -6,7 +6,7 @@ on:
       - main
 defaults:
   run:
-    working-directory: ./demo
+    working-directory: .
 jobs:
   deploy:
     name: build image and run it
@@ -21,13 +21,15 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
+
       - name: Grant execute permission for gradlew
+        working-directory: ./demo
         run: chmod +x gradlew
 
       - name: Write File
         uses: DamianReeves/write-file-action@v1.3
         with:
-          path: ./src/main/resources/properties/env.properties
+          path: ./demo/src/main/resources/properties/env.properties
           contents: database.password=${{ secrets.DATABASE_PASSWORD }}
           write-mode: overwrite
 
@@ -36,6 +38,7 @@ jobs:
         with:
           arguments: build
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
+          build-root-directory: ./demo
       
       # - name: Build with Gradle
       #   uses: gradle/actions@v3.3.0
