@@ -26,15 +26,20 @@ jobs:
         working-directory: ./demo
         run: chmod +x gradlew
 
-      - name: Write File
-        uses: DamianReeves/write-file-action@v1.3
-        with:
-          path: ./demo/src/main/resources/properties/env.properties
-          contents: database.password=${{ secrets.DATABASE_PASSWORD }}
-          write-mode: overwrite
+      # - name: Write File
+      #   uses: DamianReeves/write-file-action@v1.3
+      #   with:
+      #     path: ./demo/src/main/resources/properties/env.properties
+      #     contents: database.password=${{ secrets.DATABASE_PASSWORD }}
+      #     write-mode: overwrite
 
-      - name: logging-test
-        run: cat ./demo/src/main/resources/properties/env.properties
+      - name: create env file
+        uses: SpicyPizza/create-envfile@v2.0.3
+        with:
+          envkey_database.password: ${{ secrets.DATABASE_PASSWORD }}
+          file_name: env.properties
+          directory: ./demo/src/main/resources/properties/
+          fail_on_empty: true
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
