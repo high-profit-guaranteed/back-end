@@ -1,5 +1,8 @@
 package com.example.demo.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -9,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.demo.domain.Member;
 import com.example.demo.service.MemberService;
@@ -66,7 +70,7 @@ public class SigninController {
   }
 
   @PostMapping("/api/signin")
-  public ResponseEntity<String> apiSignin(@ModelAttribute LoginRequest loginRequest, BindingResult bindingResult,
+  public ResponseEntity<String> apiSignin(@RequestBody LoginRequest loginRequest, BindingResult bindingResult,
       HttpServletRequest httpServletRequest, Model model) {
     model.addAttribute("loginType", "session-login");
     model.addAttribute("pageName", "세션 로그인");
@@ -74,6 +78,11 @@ public class SigninController {
     if (bindingResult.hasErrors()) {
       return ResponseEntity.status(HttpStatus.FORBIDDEN).body("bindingResult.hasErrors()");
     }
+
+    // Map<String, String> body = bodyToMap(requestBody.toString());
+
+    // String uid = body.get("uid");
+    // String password = body.get("password");
 
     String uid = loginRequest.getUid();
     String password = loginRequest.getPassword();
@@ -100,6 +109,18 @@ public class SigninController {
     return ResponseEntity.ok("uid="+member.getId());
   }
 
+
+  public Map<String, String> bodyToMap(String bodyStr) {
+    Map<String, String> body = new HashMap<>();
+    String[] values = bodyStr.split("&");
+    for (String value : values) {
+      String[] pair = value.split("=");
+      if (pair.length == 2) {
+        body.put(pair[0], pair[1]);
+      }
+    }
+    return body;
+  }
 }
 
 class LoginRequest {
