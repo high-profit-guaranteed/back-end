@@ -1,8 +1,5 @@
 package com.example.demo.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -70,7 +67,7 @@ public class SigninController {
   }
 
   @PostMapping("/api/signin")
-  public ResponseEntity<String> apiSignin(@RequestBody LoginRequest loginRequest, BindingResult bindingResult,
+  public ResponseEntity<String> apiSignin(@RequestBody Login login, BindingResult bindingResult,
       HttpServletRequest httpServletRequest, Model model) {
     model.addAttribute("loginType", "session-login");
     model.addAttribute("pageName", "세션 로그인");
@@ -84,8 +81,8 @@ public class SigninController {
     // String uid = body.get("uid");
     // String password = body.get("password");
 
-    String uid = loginRequest.getUid();
-    String password = loginRequest.getPassword();
+    String uid = login.getUid();
+    String password = login.getPassword();
 
     if (uid == null || uid.isEmpty() || password == null || password.isEmpty()) {
       return ResponseEntity.status(HttpStatus.FORBIDDEN).body("uid == null || uid.isEmpty() || password == null || password.isEmpty()");
@@ -110,17 +107,17 @@ public class SigninController {
   }
 
 
-  public Map<String, String> bodyToMap(String bodyStr) {
-    Map<String, String> body = new HashMap<>();
-    String[] values = bodyStr.split("&");
-    for (String value : values) {
-      String[] pair = value.split("=");
-      if (pair.length == 2) {
-        body.put(pair[0], pair[1]);
-      }
-    }
-    return body;
-  }
+  // public Map<String, String> bodyToMap(String bodyStr) {
+  //   Map<String, String> body = new HashMap<>();
+  //   String[] values = bodyStr.split("&");
+  //   for (String value : values) {
+  //     String[] pair = value.split("=");
+  //     if (pair.length == 2) {
+  //       body.put(pair[0], pair[1]);
+  //     }
+  //   }
+  //   return body;
+  // }
 }
 
 class LoginRequest {
@@ -138,5 +135,26 @@ class LoginRequest {
 
   public String getPassword() {
     return password;
+  }
+}
+
+class Login {
+  private String uid;
+  private String password;
+
+  public String getUid() {
+    return uid;
+  }
+
+  public void setUid(String uid) {
+    this.uid = uid;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
   }
 }
