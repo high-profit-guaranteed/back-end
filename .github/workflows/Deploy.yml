@@ -33,6 +33,9 @@ jobs:
       #     contents: database.password=${{ secrets.DATABASE_PASSWORD }}
       #     write-mode: overwrite
 
+      - name: create directory
+        run: mkdir ./demo/src/main/resources/properties
+
       - name: create env file
         uses: SpicyPizza/create-envfile@v2.0.3
         with:
