@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
@@ -104,7 +106,9 @@ public class SigninController {
     session.setMaxInactiveInterval(1800); // Session이 30분동안 유지
 
     // return ResponseEntity.ok("uid="+member.getId());
-    return ResponseEntity.status(HttpStatus.OK).body("{'uid':'"+member.getId()+"'}");
+    final HttpHeaders httpHeaders= new HttpHeaders();
+    httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+    return new ResponseEntity<>("{'uid':'"+member.getId()+"'}", httpHeaders, HttpStatus.OK);
   }
 
 
