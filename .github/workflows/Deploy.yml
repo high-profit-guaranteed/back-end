@@ -33,6 +33,9 @@ jobs:
           contents: database.password=${{ secrets.DATABASE_PASSWORD }}
           write-mode: overwrite
 
+      - name: logging-test
+        run: cat ./demo/src/main/resources/properties/env.properties
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         
