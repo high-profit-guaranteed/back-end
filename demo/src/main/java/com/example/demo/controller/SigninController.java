@@ -66,7 +66,7 @@ public class SigninController {
     return "redirect:/home";
   }
 
-  @PostMapping("/api/signin")
+  @PostMapping("api/signin")
   public ResponseEntity<String> apiSignin(@RequestBody Login login, BindingResult bindingResult,
       HttpServletRequest httpServletRequest, Model model) {
     model.addAttribute("loginType", "session-login");
@@ -103,7 +103,8 @@ public class SigninController {
     session.setAttribute("id", member.getId());
     session.setMaxInactiveInterval(1800); // Session이 30분동안 유지
 
-    return ResponseEntity.ok("uid="+member.getId());
+    // return ResponseEntity.ok("uid="+member.getId());
+    return ResponseEntity.status(HttpStatus.OK).body("{'uid':'"+member.getId()+"'}");
   }
 
 
