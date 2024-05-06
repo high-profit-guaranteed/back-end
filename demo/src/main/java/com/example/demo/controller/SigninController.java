@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.example.demo.domain.Member;
 import com.example.demo.service.MemberService;
@@ -60,7 +61,7 @@ public class SigninController {
 
     // 세션을 생성하기 전에 기존의 세션 파기
     httpServletRequest.getSession().invalidate();
-    HttpSession session = httpServletRequest.getSession(true);  // Session이 없으면 생성
+    HttpSession session = httpServletRequest.getSession(true); // Session이 없으면 생성
     // 세션에 userId를 넣어줌
     session.setAttribute("id", member.getId());
     session.setMaxInactiveInterval(1800); // Session이 30분동안 유지
@@ -87,7 +88,8 @@ public class SigninController {
     String password = login.getPassword();
 
     if (uid == null || uid.isEmpty() || password == null || password.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).body("uid == null || uid.isEmpty() || password == null || password.isEmpty()");
+      return ResponseEntity.status(HttpStatus.FORBIDDEN)
+          .body("uid == null || uid.isEmpty() || password == null || password.isEmpty()");
     }
 
     Member member = memberService.signin(uid, password);
@@ -100,34 +102,50 @@ public class SigninController {
 
     // 세션을 생성하기 전에 기존의 세션 파기
     httpServletRequest.getSession().invalidate();
-    HttpSession session = httpServletRequest.getSession(true);  // Session이 없으면 생성
+    HttpSession session = httpServletRequest.getSession(true); // Session이 없으면 생성
     // 세션에 userId를 넣어줌
     session.setAttribute("id", member.getId());
     session.setMaxInactiveInterval(1800); // Session이 30분동안 유지
 
     // return ResponseEntity.ok("uid="+member.getId());
-    final HttpHeaders httpHeaders= new HttpHeaders();
+    final HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-    return new ResponseEntity<>("{'uid':'"+member.getId()+"'}", httpHeaders, HttpStatus.OK);
+    return new ResponseEntity<>("{'uid':'" + member.getId() + "'}", httpHeaders, HttpStatus.OK);
   }
 
+  @PostMapping("api/checkSession")
+  public ResponseEntity<String> postMethodName(@RequestBody String entity,
+      @SessionAttribute(name = "id", required = false) Long id) {
+
+    if (id == null) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body("seession fail");
+    }
+    Member member = memberService.getSigninMember(id);
+    if (member == null) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body("seession fail");
+    }
+
+    return ResponseEntity.ok().build();
+  }
 
   // public Map<String, String> bodyToMap(String bodyStr) {
-  //   Map<String, String> body = new HashMap<>();
-  //   String[] values = bodyStr.split("&");
-  //   for (String value : values) {
-  //     String[] pair = value.split("=");
-  //     if (pair.length == 2) {
-  //       body.put(pair[0], pair[1]);
-  //     }
-  //   }
-  //   return body;
+  // Map<String, String> body = new HashMap<>();
+  // String[] values = bodyStr.split("&");
+  // for (String value : values) {
+  // String[] pair = value.split("=");
+  // if (pair.length == 2) {
+  // body.put(pair[0], pair[1]);
+  // }
+  // }
+  // return body;
   // }
 }
 
 class LoginRequest {
-  @NonNull private final String uid;
-  @NonNull private final String password;
+  @NonNull
+  private final String uid;
+  @NonNull
+  private final String password;
 
   public LoginRequest(@NonNull String uid, @NonNull String password) {
     this.uid = uid;
