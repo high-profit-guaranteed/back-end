@@ -118,11 +118,11 @@ public class SigninController {
       @SessionAttribute(name = "id", required = false) Long id) {
 
     if (id == null) {
-      return ResponseEntity.status(HttpStatus.OK).body("fail");
+      return ResponseEntity.status(HttpStatus.OK).body("fail_session_null");
     }
     Member member = memberService.getSigninMember(id);
     if (member == null) {
-      return ResponseEntity.status(HttpStatus.OK).body("fail");
+      return ResponseEntity.status(HttpStatus.OK).body("fail_member_null");
     }
 
     return ResponseEntity.status(HttpStatus.OK).body("success");
