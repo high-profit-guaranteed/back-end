@@ -115,18 +115,18 @@ public class SigninController {
 
   @PostMapping("api/checkSession")
   public ResponseEntity<String> postMethodName(@RequestBody String bodyString,
-      @SessionAttribute(name = "id", required = false) Long id, HttpServletRequest httpServletRequest) {
+      @SessionAttribute(name = "id", required = false) Long id/*, HttpServletRequest httpServletRequest*/) {
     
-    HttpSession session = httpServletRequest.getSession(false); // Session이 없으면 null return
+    // HttpSession session = httpServletRequest.getSession(false); // Session이 없으면 null return
     
-    // if (id == null) {
-    //   return ResponseEntity.status(HttpStatus.OK).body("fail_session_null");
-    // }
-    Long sessionId = session.getAttribute("id") == null ? null : (Long) session.getAttribute("id");
-    if (sessionId == null) {
+    if (id == null) {
       return ResponseEntity.status(HttpStatus.OK).body("fail_session_null");
     }
-    Member member = memberService.getSigninMember(sessionId);
+    // Long sessionId = session.getAttribute("id") == null ? null : (Long) session.getAttribute("id");
+    // if (sessionId == null) {
+    //   return ResponseEntity.status(HttpStatus.OK).body("fail_session_null");
+    // }
+    Member member = memberService.getSigninMember(id);
     if (member == null) {
       return ResponseEntity.status(HttpStatus.OK).body("fail_member_null");
     }
