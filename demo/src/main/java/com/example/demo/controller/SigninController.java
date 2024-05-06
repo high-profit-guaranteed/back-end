@@ -128,6 +128,15 @@ public class SigninController {
     return ResponseEntity.status(HttpStatus.OK).body("success");
   }
 
+  @PostMapping("api/signout")
+  public ResponseEntity<String> signout(HttpServletRequest request) {
+    HttpSession session = request.getSession(false); // Session이 없으면 null return
+    if (session != null) {
+      session.invalidate();
+    }
+    return ResponseEntity.status(HttpStatus.OK).body("success");
+  }
+
   // public Map<String, String> bodyToMap(String bodyStr) {
   // Map<String, String> body = new HashMap<>();
   // String[] values = bodyStr.split("&");
