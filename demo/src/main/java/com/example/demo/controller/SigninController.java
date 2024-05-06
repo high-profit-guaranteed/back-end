@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -61,6 +62,41 @@ public class SigninController {
     session.setMaxInactiveInterval(1800); // Session이 30분동안 유지
 
     return "redirect:/home";
+  }
+
+  @PostMapping("/api/signin")
+  public ResponseEntity<String> apiSignin(@ModelAttribute LoginRequest loginRequest, BindingResult bindingResult,
+      HttpServletRequest httpServletRequest, Model model) {
+    model.addAttribute("loginType", "session-login");
+    model.addAttribute("pageName", "세션 로그인");
+
+    if (bindingResult.hasErrors()) {
+      return ResponseEntity.badRequest().build();
+    }
+
+    String uid = loginRequest.getUid();
+    String password = loginRequest.getPassword();
+
+    if (uid == null || uid.isEmpty() || password == null || password.isEmpty()) {
+      return ResponseEntity.badRequest().build();
+    }
+
+    Member member = memberService.signin(uid, password);
+
+    if (member == null) {
+      return ResponseEntity.badRequest().build();
+    }
+
+    // 로그인 성공 => 세션 생성
+
+    // 세션을 생성하기 전에 기존의 세션 파기
+    httpServletRequest.getSession().invalidate();
+    HttpSession session = httpServletRequest.getSession(true);  // Session이 없으면 생성
+    // 세션에 userId를 넣어줌
+    session.setAttribute("id", member.getId());
+    session.setMaxInactiveInterval(1800); // Session이 30분동안 유지
+
+    return ResponseEntity.ok(member.getId().toString());
   }
 
 }
