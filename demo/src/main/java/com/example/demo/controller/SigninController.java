@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
@@ -71,20 +72,20 @@ public class SigninController {
     model.addAttribute("pageName", "세션 로그인");
 
     if (bindingResult.hasErrors()) {
-      return ResponseEntity.badRequest().build();
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body("bindingResult.hasErrors()");
     }
 
     String uid = loginRequest.getUid();
     String password = loginRequest.getPassword();
 
     if (uid == null || uid.isEmpty() || password == null || password.isEmpty()) {
-      return ResponseEntity.badRequest().build();
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body("uid == null || uid.isEmpty() || password == null || password.isEmpty()");
     }
 
     Member member = memberService.signin(uid, password);
 
     if (member == null) {
-      return ResponseEntity.badRequest().build();
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body("member == null");
     }
 
     // 로그인 성공 => 세션 생성
@@ -96,7 +97,7 @@ public class SigninController {
     session.setAttribute("id", member.getId());
     session.setMaxInactiveInterval(1800); // Session이 30분동안 유지
 
-    return ResponseEntity.ok(member.getId().toString());
+    return ResponseEntity.ok("uid="+member.getId());
   }
 
 }
