@@ -110,11 +110,11 @@ public class SigninController {
     // return ResponseEntity.ok("uid="+member.getId());
     final HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-    return new ResponseEntity<>("{'uid':'" + member.getId() + "'}", httpHeaders, HttpStatus.OK);
+    return new ResponseEntity<>("{'sessionId':'" + session.getAttribute("id") + "'}", httpHeaders, HttpStatus.OK);
   }
 
   @PostMapping("api/checkSession")
-  public ResponseEntity<String> postMethodName(@RequestBody String entity,
+  public ResponseEntity<String> postMethodName(@RequestBody String bodyString,
       @SessionAttribute(name = "id", required = false) Long id) {
 
     if (id == null) {
