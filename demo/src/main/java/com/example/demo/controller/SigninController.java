@@ -118,14 +118,14 @@ public class SigninController {
       @SessionAttribute(name = "id", required = false) Long id) {
 
     if (id == null) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).body("seession fail");
+      return ResponseEntity.status(HttpStatus.OK).body("fail");
     }
     Member member = memberService.getSigninMember(id);
     if (member == null) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).body("seession fail");
+      return ResponseEntity.status(HttpStatus.OK).body("fail");
     }
 
-    return ResponseEntity.ok().build();
+    return ResponseEntity.status(HttpStatus.OK).body("success");
   }
 
   // public Map<String, String> bodyToMap(String bodyStr) {
