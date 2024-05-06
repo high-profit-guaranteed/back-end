@@ -14,6 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     // 추가
     configuration.addAllowedOrigin("http://duckling.d-v.kro.kr");
+    configuration.addAllowedOrigin("http://localhost:3306");
     return request -> configuration;
   }
 }
