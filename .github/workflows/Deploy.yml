@@ -93,4 +93,4 @@ jobs:
             docker container stop duckling-back;
             docker image rm ${{ secrets.DOCKERHUB_USERNAME }}/duckling-back;
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/duckling-back:latest;
-            docker run -d --rm --name duckling-back -p 80:8080 ${{ secrets.DOCKERHUB_USERNAME }}/duckling-back:latest;
+            docker run -d --rm --name duckling-back -p 443:8080 ${{ secrets.DOCKERHUB_USERNAME }}/duckling-back:latest;

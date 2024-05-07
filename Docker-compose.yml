@@ -7,4 +7,4 @@ services:
       # npm run build시 환경 변수 참조가 안되어 args로 전달하고, Dockerfile에서 변수로 사용한다.
       # args:
     ports:
-      - '80:8080'
+      - '443:8080'
