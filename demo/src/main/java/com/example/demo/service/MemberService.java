@@ -88,7 +88,7 @@ public class MemberService {
 
   public Member signup(@NonNull String uid, @NonNull String password, @NonNull String name, @NonNull String emailName,
       @NonNull String emailDomain) {
-    Member member = new Member(uid, password, name, emailName, emailDomain);
+    Member member = new Member(uid, emailName, emailDomain, password, name);
     validateDuplicateMember(member);
     return memberRepository.save(member);
   }
