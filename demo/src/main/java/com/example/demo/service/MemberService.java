@@ -86,6 +86,14 @@ public class MemberService {
     return member;
   }
 
+  public Member signup(@NonNull String uid, @NonNull String password, @NonNull String name, @NonNull String emailName,
+      @NonNull String emailDomain) {
+    Member member = new Member(uid, password, name, emailName, emailDomain);
+    validateDuplicateMember(member);
+    return memberRepository.save(member);
+  }
+
+
   public Member getSigninMember(@NonNull Long id) {
     return memberRepository.findById(id).orElse(null);
   }

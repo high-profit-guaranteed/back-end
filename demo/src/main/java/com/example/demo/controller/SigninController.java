@@ -106,11 +106,54 @@ public class SigninController {
     // 세션에 userId를 넣어줌
     session.setAttribute("id", member.getId());
     session.setMaxInactiveInterval(1800); // Session이 30분동안 유지
+    
 
     // return ResponseEntity.ok("uid="+member.getId());
     final HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setContentType(MediaType.APPLICATION_JSON);
     return new ResponseEntity<>("{'sessionId':'" + session.getAttribute("id") + "'}", httpHeaders, HttpStatus.OK);
+  }
+
+  @PostMapping("api/signup")
+  public ResponseEntity<String> apiSignup(@RequestBody Signup signup, BindingResult bindingResult,
+      HttpServletRequest httpServletRequest) {
+
+    if (bindingResult.hasErrors()) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body("bindingResult.hasErrors()");
+    }
+
+    // Map<String, String> body = bodyToMap(requestBody.toString());
+
+    // String uid = body.get("uid");
+    // String password = body.get("password");
+
+    String uid = signup.getUid();
+    String password = signup.getPassword();
+    String name = signup.getName();
+    String email = signup.getEmail();
+
+    String emailName = email.split("@")[0];
+    String emailDomain = email.split("@")[1];
+
+    if (uid == null || uid.isEmpty() || password == null || password.isEmpty() || name == null || name.isEmpty()
+        || email == null || email.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN)
+          .body("uid == null || uid.isEmpty() || password == null || password.isEmpty() || name == null || name.isEmpty() || email == null || email.isEmpty()");
+    }
+
+    if (emailName == null || emailDomain == null) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body("emailName == null || emailDomain == null");
+    }
+
+    
+    Member member = memberService.signup(uid, password, name, emailName, emailDomain);
+
+    if (member == null) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body("member == null");
+    }
+
+    // return ResponseEntity.ok("uid="+member.getId());
+    return new ResponseEntity<String>("success", HttpStatus.OK);
   }
 
   @PostMapping("api/checkSession")
@@ -194,5 +237,44 @@ class Login {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+}
+
+class Signup {
+  private String uid;
+  private String password;
+  private String name;
+  private String email;
+
+  public String getUid() {
+    return uid;
+  }
+
+  public void setUid(String uid) {
+    this.uid = uid;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
   }
 }
