@@ -13,6 +13,7 @@ import lombok.ToString;
 
 public class inquire_balance_DTO {
 
+  @Data
   @AllArgsConstructor
   public static class ReqHeader {
     @NonNull
@@ -44,6 +45,7 @@ public class inquire_balance_DTO {
     }
   }
 
+  @Data
   @AllArgsConstructor
   public static class ReqQueryParam {
     @NonNull
