@@ -336,13 +336,23 @@ public class AccountService {
   public void setBalance(Long accountId) {
     Long balance = 0L;
     for (ResBodyOutput2 output2 : getAccountInfoDomestic(accountId).getOutput2()) {
-      balance += Long.parseLong(output2.getCma_evlu_amt());
+      balance += Long.parseLong(output2.getTot_evlu_amt());
+      // log.info("balance: {}", balance);
+      // log.info("output2: {}", output2.getTot_evlu_amt());
     }
     // balance += getAccountInfoOverseas(accountId).getOutput2().get
-    for (com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO.ResBodyOutput1 output1 : getAccountInfoOverseas(accountId).getOutput1()) {
-      balance += Long.parseLong(output1.getOvrs_stck_evlu_amt());
-    }
-    updateBalance(accountId, balance);
+    double balance2 = 0.0;
+
+    com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO.ResBodyOutput2 output2 = getAccountInfoOverseas(accountId).getOutput2();
+
+    balance2 += Double.parseDouble(output2.getFrcr_pchs_amt1());
+    balance2 += Double.parseDouble(output2.getOvrs_tot_pfls());
+    // log.info("balance: {}", getAccountInfoOverseas(accountId).toString());
+
+    // // TODO: 환율 불러오기 적용
+    // balance2 *= 1000;
+
+    updateBalance(accountId, balance+(long)balance2);
   }
 
   public boolean isOwner(Long memberId, Long accountId) {
