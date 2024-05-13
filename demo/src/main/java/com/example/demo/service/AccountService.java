@@ -322,7 +322,7 @@ public class AccountService {
   public long getBalance(Long accountId) {
     Account account = accountRepository.findById(accountId)
         .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
-
+    setBalance(accountId);
     return account.getBalance();
   }
 
@@ -342,6 +342,7 @@ public class AccountService {
     for (com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO.ResBodyOutput1 output1 : getAccountInfoOverseas(accountId).getOutput1()) {
       balance += Long.parseLong(output1.getOvrs_stck_evlu_amt());
     }
+    updateBalance(accountId, balance);
   }
 
   public boolean isOwner(Long memberId, Long accountId) {
