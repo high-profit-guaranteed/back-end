@@ -6,8 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import com.example.demo.domain.Account;
 import com.example.demo.domain.Member;
 import com.example.demo.service.AccountService;
 import com.example.demo.service.MemberService;
@@ -30,11 +32,13 @@ public class APIController {
 
   @GetMapping("/api/getAccounts")
   public ResponseEntity<Accounts> getAccounts(@SessionAttribute(name = "id", required = false) Long id) {
-    
+
     // check session start
-    if (id == null) return ResponseEntity.status(HttpStatus.OK).body(null);
+    if (id == null)
+      return ResponseEntity.status(HttpStatus.OK).body(null);
     Member member = memberService.getSigninMember(id);
-    if (member == null) return ResponseEntity.status(HttpStatus.OK).body(null);
+    if (member == null)
+      return ResponseEntity.status(HttpStatus.OK).body(null);
     // check session end
 
     Accounts accounts = new Accounts();
@@ -46,19 +50,28 @@ public class APIController {
   }
 
   @GetMapping("/api/getBalance")
-  public ResponseEntity<Balance> getBalance(@SessionAttribute(name = "id", required = false) Long id) {
-      
-      // check session start
-      if (id == null) return ResponseEntity.status(HttpStatus.OK).body(null);
-      Member member = memberService.getSigninMember(id);
-      if (member == null) return ResponseEntity.status(HttpStatus.OK).body(null);
-      // check session end
-  
-      Balance balance = new Balance();
-      balance.setBalance(accountService.getBalance(member.getId()));
-  
-      return ResponseEntity.ok(balance);
-    }
+  public ResponseEntity<Balance> getBalance(@SessionAttribute(name = "id", required = false) Long id,
+      @RequestParam("accountId") Long accountId) {
+
+    // check session start
+    if (id == null)
+      return ResponseEntity.status(HttpStatus.OK).body(null);
+    Member member = memberService.getSigninMember(id);
+    if (member == null)
+      return ResponseEntity.status(HttpStatus.OK).body(null);
+    // check session end
+
+    Account account = accountService.findById(accountId);
+    if (account == null)
+      return ResponseEntity.status(HttpStatus.OK).body(null);
+    if (!accountService.isOwner(member.getId(), account.getId()))
+      return ResponseEntity.status(HttpStatus.OK).body(null);
+
+    Balance balance = new Balance();
+    balance.setBalance(accountService.getBalance(account.getId()));
+
+    return ResponseEntity.ok(balance);
+  }
 
 }
 

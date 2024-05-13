@@ -79,7 +79,7 @@ public class AccountController {
       return "redirect:/signin";
     }
 
-    Account account = accountService.findOne(accountId);
+    Account account = accountService.findById(accountId);
     if (account == null) {
       return "redirect:/home";
     }
@@ -99,7 +99,7 @@ public class AccountController {
       return "redirect:/signin";
     }
 
-    Account account = accountService.findOne(accountId);
+    Account account = accountService.findById(accountId);
     if (account == null) {
       return "redirect:/home";
     }
@@ -120,7 +120,7 @@ public class AccountController {
       return "redirect:/signin";
     }
 
-    Account account = accountService.findOne(accountId);
+    Account account = accountService.findById(accountId);
     if (account == null) {
       return "redirect:/home";
     }
@@ -145,7 +145,7 @@ public class AccountController {
       return "redirect:/signin";
     }
 
-    Account account = accountService.findOne(accountId);
+    Account account = accountService.findById(accountId);
     if (account == null) {
       return "redirect:/home";
     }
@@ -187,7 +187,7 @@ public class AccountController {
       return "redirect:/signin";
     }
 
-    Account account = accountService.findOne(accountId);
+    Account account = accountService.findById(accountId);
     if (account == null) {
       return "redirect:/home";
     }
@@ -225,7 +225,7 @@ public class AccountController {
       return "redirect:/signin";
     }
 
-    Account account = accountService.findOne(accountId);
+    Account account = accountService.findById(accountId);
     if (account == null) {
       return "redirect:/home";
     }
@@ -261,7 +261,7 @@ public class AccountController {
       return "redirect:/signin";
     }
 
-    Account account = accountService.findOne(accountId);
+    Account account = accountService.findById(accountId);
     if (account == null) {
       return "redirect:/home";
     }
