@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,6 @@ import com.example.demo.service.MemberService;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @Controller
@@ -67,8 +67,7 @@ public class APIController {
     if (!accountService.isOwner(member.getId(), account.getId()))
       return ResponseEntity.status(HttpStatus.OK).body(null);
 
-    Balance balance = new Balance();
-    balance.setBalance(accountService.getBalance(account.getId()));
+    Balance balance = new Balance(accountService.getBalance(account.getId()));
 
     return ResponseEntity.ok(balance);
   }
@@ -76,9 +75,12 @@ public class APIController {
 }
 
 @Data
-@NoArgsConstructor
 class Accounts {
   private List<AccountObj> accounts;
+
+  public Accounts() {
+    accounts = new ArrayList<>();
+  }
 
   public void addAccount(String accountName, Long accountId) {
     accounts.add(new AccountObj(accountName, accountId));
@@ -94,7 +96,7 @@ class AccountObj {
 }
 
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
 class Balance {
   private Long balance;
 }
