@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -12,6 +11,11 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import com.example.demo.domain.Member;
 import com.example.demo.service.AccountService;
 import com.example.demo.service.MemberService;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Controller
 public class APIController {
@@ -25,7 +29,7 @@ public class APIController {
   }
 
   @GetMapping("/api/getAccounts")
-  public ResponseEntity<Accounts> getMethodName(@SessionAttribute(name = "id", required = false) Long id) {
+  public ResponseEntity<Accounts> getAccounts(@SessionAttribute(name = "id", required = false) Long id) {
     
     // check session start
     if (id == null) return ResponseEntity.status(HttpStatus.OK).body(null);
@@ -33,32 +37,51 @@ public class APIController {
     if (member == null) return ResponseEntity.status(HttpStatus.OK).body(null);
     // check session end
 
-    Accounts accountNames = new Accounts();
+    Accounts accounts = new Accounts();
     accountService.findByMemberId(member.getId()).forEach(account -> {
-      accountNames.addAccount(account.getAccountName());
+      accounts.addAccount(account.getAccountName(), account.getId());
     });
 
-    return ResponseEntity.ok(accountNames);
+    return ResponseEntity.ok(accounts);
   }
+
+  @GetMapping("/api/getBalance")
+  public ResponseEntity<Balance> getBalance(@SessionAttribute(name = "id", required = false) Long id) {
+      
+      // check session start
+      if (id == null) return ResponseEntity.status(HttpStatus.OK).body(null);
+      Member member = memberService.getSigninMember(id);
+      if (member == null) return ResponseEntity.status(HttpStatus.OK).body(null);
+      // check session end
+  
+      Balance balance = new Balance();
+      balance.setBalance(accountService.getBalance(member.getId()));
+  
+      return ResponseEntity.ok(balance);
+    }
 
 }
 
+@Data
+@NoArgsConstructor
 class Accounts {
-  private List<String> accounts;
+  private List<AccountObj> accounts;
 
-  public Accounts() {
-    this.accounts = new ArrayList<String>();
+  public void addAccount(String accountName, Long accountId) {
+    accounts.add(new AccountObj(accountName, accountId));
   }
+}
 
-  public List<String> getAccounts() {
-    return accounts;
-  }
+@Data
+@NonNull
+@AllArgsConstructor
+class AccountObj {
+  private String accountName;
+  private Long accountId;
+}
 
-  public void setAccounts(List<String> accounts) {
-    this.accounts = accounts;
-  }
-
-  public void addAccount(String account) {
-    this.accounts.add(account);
-  }
+@Data
+@NoArgsConstructor
+class Balance {
+  private Long balance;
 }

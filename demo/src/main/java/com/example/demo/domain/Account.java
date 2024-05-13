@@ -4,12 +4,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.NoArgsConstructor;
 
 @Entity
 // @NamedQuery(
 //   name = "Account.updateAccessToken",
 //   query = "update Account a set a.accessToken = :accessToken, a.accessTokenExpired = :accessTokenExpired where a.id = :accountId"
 // )
+@NoArgsConstructor
 public class Account {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,18 +29,18 @@ public class Account {
   private String accessTokenExpired;
   private String approval_key;
 
-  public Account() {
-  }
+  private Long balance;
 
-  public Account(Long memberId, int accountNumber, short accountProdCode, String accountName, boolean isVirtual, String aPP_KEY,
-      String aPP_SECRET) {
+  public Account(Long memberId, int accountNumber, short accountProdCode, String accountName, boolean isVirtual, String APP_KEY,
+      String APP_SECRET) {
     this.memberId = memberId;
     this.accountNumber = accountNumber;
     this.accountProdCode = accountProdCode;
     this.accountName = accountName;
     this.isVirtual = isVirtual;
-    APP_KEY = aPP_KEY;
-    APP_SECRET = aPP_SECRET;
+    this.APP_KEY = APP_KEY;
+    this.APP_SECRET = APP_SECRET;
+    this.balance = 0L;
   }
 
   public Long getId() {
@@ -127,5 +129,13 @@ public class Account {
 
   public void setApproval_key(String approval_key) {
     this.approval_key = approval_key;
+  }
+
+  public Long getBalance() {
+    return balance;
+  }
+
+  public void setBalance(Long balance) {
+    this.balance = balance;
   }
 }

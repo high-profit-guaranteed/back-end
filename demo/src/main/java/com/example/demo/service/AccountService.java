@@ -23,6 +23,7 @@ import com.example.demo.kisAPI.dto.oauth2.tokenP_DTO;
 import com.example.demo.kisAPI.dto.tryitout.H0STCNT0_DTO;
 import com.example.demo.kisAPI.dto.tryitout.HDFSCNT0_DTO;
 import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.quotations.inquire_price_DTO;
+import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.inquire_balance_DTO.ResBodyOutput2;
 import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.inquire_daily_ccld_DTO;
 import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.order_cash_DTO;
 import com.example.demo.kisAPI.dto.uapi.overseas_price.v1.quotations.price_DTO;
@@ -316,5 +317,30 @@ public class AccountService {
     test.post(reqHeader, reqBody);
 
     log.info("wsOverseas");
+  }
+
+  public long getBalance(Long accountId) {
+    Account account = accountRepository.findById(accountId)
+        .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
+
+    return account.getBalance();
+  }
+
+  public void updateBalance(Long accountId, long balance) {
+    Account updatedAccount = accountRepository.findById(accountId)
+        .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
+    updatedAccount.setBalance(balance);
+    accountRepository.save(updatedAccount);
+  }
+
+  public void setBalance(Long accountId) {
+    Long balance = 0L;
+    for (ResBodyOutput2 output2 : getAccountInfoDomestic(accountId).getOutput2()) {
+      balance += Long.parseLong(output2.getCma_evlu_amt());
+    }
+    // balance += getAccountInfoOverseas(accountId).getOutput2().get
+    for (com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO.ResBodyOutput1 output1 : getAccountInfoOverseas(accountId).getOutput1()) {
+      balance += Long.parseLong(output1.getOvrs_stck_evlu_amt());
+    }
   }
 }
