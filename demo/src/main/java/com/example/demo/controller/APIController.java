@@ -92,7 +92,7 @@ public class APIController {
 
   @GetMapping("api/checkSession")
   public ResponseEntity<String> postMethodName(@SessionAttribute(name = "id", required = false) Long id) {
-    if (CheckSession(id) == null) return ResponseEntity.status(HttpStatus.OK).build();
+    if (CheckSession(id) == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     else return ResponseEntity.status(HttpStatus.OK).body("Success");
   }
 
@@ -109,7 +109,7 @@ public class APIController {
   public ResponseEntity<Accounts> getAccounts(@SessionAttribute(name = "id", required = false) Long id) {
 
     Member member = CheckSession(id);
-    if (member == null) return ResponseEntity.status(HttpStatus.OK).build();
+    if (member == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
     Accounts accounts = new Accounts();
     accountService.findByMemberId(member.getId()).forEach(account -> {
@@ -123,19 +123,14 @@ public class APIController {
   public ResponseEntity<Balance> getBalance(@SessionAttribute(name = "id", required = false) Long id,
       @RequestParam("accountId") Long accountId) {
 
-    // check session start
-    if (id == null)
-      return ResponseEntity.status(HttpStatus.OK).body(null);
-    Member member = memberService.getSigninMember(id);
-    if (member == null)
-      return ResponseEntity.status(HttpStatus.OK).body(null);
-    // check session end
+    Member member = CheckSession(id);
+    if (member == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
     Account account = accountService.findById(accountId);
     if (account == null)
-      return ResponseEntity.status(HttpStatus.OK).body(null);
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     if (!accountService.isOwner(member.getId(), account.getId()))
-      return ResponseEntity.status(HttpStatus.OK).body(null);
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
     Balance balance = new Balance(accountService.getBalance(account.getId()));
 
