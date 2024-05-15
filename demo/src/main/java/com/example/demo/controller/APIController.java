@@ -93,7 +93,7 @@ public class APIController {
   @GetMapping("api/checkSession")
   public ResponseEntity<String> postMethodName(@SessionAttribute(name = "id", required = false) Long id) {
     if (CheckSession(id) == null) return ResponseEntity.status(HttpStatus.OK).build();
-    else return ResponseEntity.status(HttpStatus.OK).body("success");
+    else return ResponseEntity.status(HttpStatus.OK).body("Success");
   }
 
   @GetMapping("api/signout")
