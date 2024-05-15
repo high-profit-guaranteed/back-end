@@ -102,7 +102,7 @@ public class APIController {
     HttpSession session = request.getSession(false); // Session이 없으면 null return
     if (session != null) session.invalidate(); // Session 파기
 
-    return ResponseEntity.status(HttpStatus.OK).body("Success");
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @GetMapping("api/accounts")
