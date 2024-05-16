@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.example.demo.domain.Account;
+import com.example.demo.domain.BalanceRecord;
 import com.example.demo.domain.Member;
 import com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO.ResBodyOutput1;
 import com.example.demo.service.AccountService;
@@ -148,7 +149,8 @@ public class APIController {
 
     recordController.SyncHistory(accountId);
 
-    Double realBalance = balanceRecordService.findByAccountIdAndRecordDate(accountId, recordController.GetLastRecordDate(accountId))
+    Double realBalance = balanceRecordService
+        .findByAccountIdAndRecordDate(accountId, recordController.GetLastRecordDate(accountId))
         .getBalance();
     Double stockBalance = 0.0;
     for (ResBodyOutput1 output : accountService.getAccountInfoOverseas(accountId).getOutput1()) {
@@ -160,23 +162,22 @@ public class APIController {
     return ResponseEntity.ok(balance);
   }
 
-  // @GetMapping("api/balanceRecord")
-  // public ResponseEntity<List<BalanceRecord>>
-  // getBalanceRecords(@SessionAttribute(name = "id", required = false) Long id,
-  // @RequestParam("accountId") Long accountId) {
+  @GetMapping("api/balanceRecord")
+  public ResponseEntity<List<BalanceRecord>> getBalanceRecords(@SessionAttribute(name = "id", required = false) Long id,
+      @RequestParam("accountId") Long accountId) {
 
-  // Member member = CheckSession(id);
-  // if (member == null)
-  // return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    Member member = CheckSession(id);
+    if (member == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-  // Account account = accountService.findById(accountId);
-  // if (account == null)
-  // return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-  // if (!accountService.isOwner(member.getId(), account.getId()))
-  // return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    Account account = accountService.findById(accountId);
+    if (account == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    if (!accountService.isOwner(member.getId(), account.getId()))
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-  // return ResponseEntity.ok(balanceRecordService.findByAccountId(accountId));
-  // }
+    return ResponseEntity.ok(balanceRecordService.findByAccountId(accountId));
+  }
 
   @GetMapping("api/accessToken")
   public ResponseEntity<String> getAccessToken(@SessionAttribute(name = "id", required = false) Long id) {
