@@ -198,6 +198,34 @@ public class APIController {
     return ResponseEntity.ok("Success");
   }
 
+  @GetMapping("api/stocksEvaluationBalance")
+  public ResponseEntity<List<StockBalance>> getStocksEvaluationBalance(@SessionAttribute(name = "id", required = false) Long id,
+  @RequestParam("accountId") Long accountId) {
+
+    Member member = CheckSession(id);
+    if (member == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    Account account = accountService.findById(accountId);
+    if (account == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    if (!accountService.isOwner(member.getId(), account.getId()))
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    List<ResBodyOutput1> output1 = accountService.getAccountInfoOverseas(accountId).getOutput1();
+
+    List<StockBalance> stockBalances = new ArrayList<>();
+    for (ResBodyOutput1 output : output1) {
+      StockBalance stockBalance = new StockBalance(output.getOvrs_pdno(), output.getOvrs_item_name(),
+          Double.parseDouble(output.getNow_pric2()), Integer.parseInt(output.getOvrs_cblc_qty()),
+          Double.parseDouble(output.getFrcr_evlu_pfls_amt()));
+      stockBalances.add(stockBalance);
+    }
+
+    return ResponseEntity.ok(stockBalances);
+  }
+  
+
   @GetMapping("api/syncTradingRecord")
   public ResponseEntity<String> SyncTradingRecord(@SessionAttribute(name = "id", required = false) Long id,
       @RequestParam("accountId") Long accountId) {
@@ -267,4 +295,14 @@ class AccountObj {
 @AllArgsConstructor
 class Balance {
   private Double balance;
+}
+
+@Data
+@AllArgsConstructor
+class StockBalance {
+  private String ticker;
+  private String name;
+  private Double price;
+  private int amount;
+  private Double difference;
 }
