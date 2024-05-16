@@ -214,6 +214,22 @@ public class inquire_ccnl_DTO {
       return new ReqQueryParam(CANO, ACNT_PRDT_CD, account.isVirtual()?"":"%", start, end, "00", "00", account.isVirtual()?"":"NASD", "DS", "", "", "", "", "");
     }
 
+    @NonNull
+    public static ReqQueryParam from(@NonNull Account account, @NonNull String start, @NonNull String end, @NonNull String ctx_area_fk200, @NonNull String ctx_area_nk200) {
+      String CANO = String.valueOf(account.getAccountNumber());
+      String ACNT_PRDT_CD = String.valueOf(account.getAccountProdCode());
+      if (CANO == null || CANO.length() != 8 || ACNT_PRDT_CD == null) {
+        throw new IllegalStateException("계좌 정보가 올바르지 않습니다.");
+      }
+      if (ACNT_PRDT_CD.length() == 1) {
+        ACNT_PRDT_CD = "0" + ACNT_PRDT_CD;
+      } else if (ACNT_PRDT_CD.length() != 2) {
+        throw new IllegalStateException("계좌 정보가 올바르지 않습니다.");
+      }
+
+      return new ReqQueryParam(CANO, ACNT_PRDT_CD, account.isVirtual()?"":"%", start, end, "00", "00", account.isVirtual()?"":"NASD", "DS", "", "", "", ctx_area_nk200, ctx_area_fk200);
+    }
+
     public String getCANO() {
       return CANO;
     }

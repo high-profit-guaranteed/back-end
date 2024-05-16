@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.example.demo.domain.Account;
 import com.example.demo.domain.Member;
+import com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO.ResBodyOutput1;
 import com.example.demo.service.AccountService;
+import com.example.demo.service.BalanceRecordService;
 import com.example.demo.service.MemberService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,10 +32,15 @@ public class APIController {
 
   private final MemberService memberService;
   private final AccountService accountService;
+  private final BalanceRecordService balanceRecordService;
+  private final RecordController recordController;
 
-  public APIController(MemberService memberService, AccountService accountService) {
+  public APIController(MemberService memberService, AccountService accountService,
+      BalanceRecordService balanceRecordService, RecordController recordController) {
     this.memberService = memberService;
     this.accountService = accountService;
+    this.balanceRecordService = balanceRecordService;
+    this.recordController = recordController;
   }
 
   @PostMapping("api/signin")
@@ -83,24 +90,29 @@ public class APIController {
       return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    if (emailName == null || emailDomain == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    if (emailName == null || emailDomain == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     Member member = memberService.signup(uid, password, name, emailName, emailDomain);
-    if (member == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    if (member == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
     return new ResponseEntity<String>("SignUp Success", HttpStatus.OK);
   }
 
   @GetMapping("api/checkSession")
   public ResponseEntity<String> postMethodName(@SessionAttribute(name = "id", required = false) Long id) {
-    if (CheckSession(id) == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-    else return ResponseEntity.status(HttpStatus.OK).body("Success");
+    if (CheckSession(id) == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    else
+      return ResponseEntity.status(HttpStatus.OK).body("Success");
   }
 
   @GetMapping("api/signout")
   public ResponseEntity<String> signout(HttpServletRequest request) {
 
     HttpSession session = request.getSession(false); // Session이 없으면 null return
-    if (session != null) session.invalidate(); // Session 파기
+    if (session != null)
+      session.invalidate(); // Session 파기
 
     return ResponseEntity.status(HttpStatus.OK).build();
   }
@@ -109,7 +121,8 @@ public class APIController {
   public ResponseEntity<Accounts> getAccounts(@SessionAttribute(name = "id", required = false) Long id) {
 
     Member member = CheckSession(id);
-    if (member == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    if (member == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
     Accounts accounts = new Accounts();
     accountService.findByMemberId(member.getId()).forEach(account -> {
@@ -124,7 +137,8 @@ public class APIController {
       @RequestParam("accountId") Long accountId) {
 
     Member member = CheckSession(id);
-    if (member == null) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    if (member == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
     Account account = accountService.findById(accountId);
     if (account == null)
@@ -132,16 +146,84 @@ public class APIController {
     if (!accountService.isOwner(member.getId(), account.getId()))
       return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-    Balance balance = new Balance(accountService.getBalance(account.getId()));
+    recordController.SyncHistory(accountId);
+
+    Double realBalance = balanceRecordService.findByAccountIdAndRecordDate(accountId, recordController.GetLastRecordDate(accountId))
+        .getBalance();
+    Double stockBalance = 0.0;
+    for (ResBodyOutput1 output : accountService.getAccountInfoOverseas(accountId).getOutput1()) {
+      stockBalance += Double.parseDouble(output.getOvrs_stck_evlu_amt());
+    }
+
+    Balance balance = new Balance(100000 + realBalance + stockBalance);
 
     return ResponseEntity.ok(balance);
   }
 
+  // @GetMapping("api/balanceRecord")
+  // public ResponseEntity<List<BalanceRecord>>
+  // getBalanceRecords(@SessionAttribute(name = "id", required = false) Long id,
+  // @RequestParam("accountId") Long accountId) {
+
+  // Member member = CheckSession(id);
+  // if (member == null)
+  // return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+  // Account account = accountService.findById(accountId);
+  // if (account == null)
+  // return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+  // if (!accountService.isOwner(member.getId(), account.getId()))
+  // return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+  // return ResponseEntity.ok(balanceRecordService.findByAccountId(accountId));
+  // }
+
+  @GetMapping("api/accessToken")
+  public ResponseEntity<String> getAccessToken(@SessionAttribute(name = "id", required = false) Long id) {
+
+    Member member = CheckSession(id);
+    if (member == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    Accounts accounts = new Accounts();
+    accountService.findByMemberId(member.getId()).forEach(account -> {
+      accounts.addAccount(account.getAccountName(), account.getId());
+    });
+
+    accounts.getAccounts().forEach(account -> {
+      accountService.getAccessToken(account.getAccountId());
+    });
+
+    return ResponseEntity.ok("Success");
+  }
+
+  @GetMapping("api/syncTradingRecord")
+  public ResponseEntity<String> SyncTradingRecord(@SessionAttribute(name = "id", required = false) Long id,
+      @RequestParam("accountId") Long accountId) {
+
+    Member member = CheckSession(id);
+    if (member == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    Account account = accountService.findById(accountId);
+    if (account == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    if (!accountService.isOwner(member.getId(), account.getId()))
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    recordController.SyncHistory(accountId);
+
+    return ResponseEntity.ok("Success");
+  }
+
   private Member CheckSession(Long id) {
-    if (id == null) return null;
+    if (id == null)
+      return null;
     Member member = memberService.getSigninMember(id);
-    if (member == null) return null;
-    else return member;
+    if (member == null)
+      return null;
+    else
+      return member;
   }
 }
 
@@ -183,5 +265,5 @@ class AccountObj {
 @Data
 @AllArgsConstructor
 class Balance {
-  private Long balance;
+  private Double balance;
 }

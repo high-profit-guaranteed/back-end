@@ -29,7 +29,7 @@ public class Account {
   private String accessTokenExpired;
   private String approval_key;
 
-  private Long balance;
+  private Double balance;
 
   public Account(Long memberId, int accountNumber, short accountProdCode, String accountName, boolean isVirtual, String APP_KEY,
       String APP_SECRET) {
@@ -40,7 +40,7 @@ public class Account {
     this.isVirtual = isVirtual;
     this.APP_KEY = APP_KEY;
     this.APP_SECRET = APP_SECRET;
-    this.balance = 0L;
+    this.balance = 0.0;
   }
 
   public Long getId() {
@@ -131,11 +131,11 @@ public class Account {
     this.approval_key = approval_key;
   }
 
-  public Long getBalance() {
+  public Double getBalance() {
     return balance;
   }
 
-  public void setBalance(Long balance) {
+  public void setBalance(Double balance) {
     this.balance = balance;
   }
 }

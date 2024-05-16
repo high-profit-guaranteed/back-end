@@ -1,5 +1,6 @@
 package com.example.demo.kisAPI.classes.uapi.overseas_stock.v1.trading;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -19,7 +20,7 @@ public class inquire_ccnl implements inquire_ccnl_Interface {
 
   @Override
   @NonNull
-  public ResBody get(@NonNull ReqHeader reqHeader, @NonNull ReqQueryParam reqQueryParam) {
+  public ResponseEntity<ResBody> get(@NonNull ReqHeader reqHeader, @NonNull ReqQueryParam reqQueryParam) {
     WebClient webClient = WebClient.builder().baseUrl(this.url).defaultHeaders(header -> {
       header.set("content-type", reqHeader.getContent_type());
       header.set("authorization", reqHeader.getAuthorization());
@@ -28,7 +29,7 @@ public class inquire_ccnl implements inquire_ccnl_Interface {
       header.set("tr_id", reqHeader.getTr_id());
     }).build();
 
-    ResBody resBody = webClient.get()
+    ResponseEntity<ResBody> response = webClient.get()
         .uri(uriBuilder -> uriBuilder.queryParam("CANO", reqQueryParam.getCANO())
             .queryParam("ACNT_PRDT_CD", reqQueryParam.getACNT_PRDT_CD())
             .queryParam("PDNO", reqQueryParam.getPDNO())
@@ -45,14 +46,14 @@ public class inquire_ccnl implements inquire_ccnl_Interface {
             .queryParam("CTX_AREA_FK200", reqQueryParam.getCTX_AREA_FK200())
             .build())
         .retrieve()
-        .bodyToMono(ResBody.class)
+        .toEntity(ResBody.class)
         .block();
 
-    if (resBody == null) {
+    if (response == null) {
       throw new IllegalStateException("응답이 올바르지 않습니다.");
     }
 
-    return resBody;
+    return response;
   }
 
   

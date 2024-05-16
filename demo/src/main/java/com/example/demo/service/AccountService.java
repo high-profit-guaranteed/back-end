@@ -1,8 +1,10 @@
 package com.example.demo.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -23,7 +25,6 @@ import com.example.demo.kisAPI.dto.oauth2.tokenP_DTO;
 import com.example.demo.kisAPI.dto.tryitout.H0STCNT0_DTO;
 import com.example.demo.kisAPI.dto.tryitout.HDFSCNT0_DTO;
 import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.quotations.inquire_price_DTO;
-import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.inquire_balance_DTO.ResBodyOutput2;
 import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.inquire_daily_ccld_DTO;
 import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.order_cash_DTO;
 import com.example.demo.kisAPI.dto.uapi.overseas_price.v1.quotations.price_DTO;
@@ -227,13 +228,42 @@ public class AccountService {
     try {
       // GET 요청
       inquire_daily_ccld_DTO.ResBody responseBody = new inquire_daily_ccld(account.isVirtual())
-          .get(inquire_daily_ccld_DTO.ReqHeader.from(account, false), inquire_daily_ccld_DTO.ReqQueryParam.from(account, start, end, null));
+          .get(inquire_daily_ccld_DTO.ReqHeader.from(account, false),
+              inquire_daily_ccld_DTO.ReqQueryParam.from(account, start, end, null));
 
       return responseBody;
     } catch (WebClientResponseException e) {
       log.error("error: {}", e.getResponseBodyAsString());
       return null;
     }
+  }
+
+  public List<inquire_ccnl_DTO.ResBody> getHistoriesOverseas(Long accountId, @NonNull String start, @NonNull String end) {
+    Account account = accountRepository.findById(accountId)
+        .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
+
+    List<inquire_ccnl_DTO.ResBody> resBodies = new ArrayList<inquire_ccnl_DTO.ResBody>();
+
+    try {
+      // GET 요청
+      ResponseEntity<inquire_ccnl_DTO.ResBody> response = new inquire_ccnl(account.isVirtual())
+          .get(inquire_ccnl_DTO.ReqHeader.from(account), inquire_ccnl_DTO.ReqQueryParam.from(account, start, end));
+      resBodies.add(response.getBody());
+
+      while (response.getHeaders().get("tr_cont").get(0).equals("F") ||
+          response.getHeaders().get("tr_cont").get(0).equals("M")) {
+        response = new inquire_ccnl(account.isVirtual())
+            .get(inquire_ccnl_DTO.ReqHeader.from(account), inquire_ccnl_DTO.ReqQueryParam.from(account, start, end,
+                response.getBody().getCtx_area_fk200(), response.getBody().getCtx_area_nk200()));
+        resBodies.add(response.getBody());
+      }
+
+    } catch (WebClientResponseException e) {
+      log.error("error: {}", e.getResponseBodyAsString());
+      return null;
+    }
+
+    return resBodies;
   }
 
   public inquire_ccnl_DTO.ResBody getHistoryOverseas(Long accountId, @NonNull String start, @NonNull String end) {
@@ -243,7 +273,7 @@ public class AccountService {
     try {
       // GET 요청
       inquire_ccnl_DTO.ResBody responseBody = new inquire_ccnl(account.isVirtual())
-          .get(inquire_ccnl_DTO.ReqHeader.from(account), inquire_ccnl_DTO.ReqQueryParam.from(account, start, end));
+          .get(inquire_ccnl_DTO.ReqHeader.from(account), inquire_ccnl_DTO.ReqQueryParam.from(account, start, end)).getBody();
 
       return responseBody;
     } catch (WebClientResponseException e) {
@@ -253,20 +283,20 @@ public class AccountService {
   }
 
   // public String getApproval(Long accountId) {
-  //   Account account = accountRepository.findById(accountId)
-  //       .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
+  // Account account = accountRepository.findById(accountId)
+  // .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
 
-  //   try {
-  //     // GET 요청
-  //     Approval_DTO.ResBody responseBody = new Approval(account.isVirtual())
-  //         .post(new Approval_DTO.ReqHeader(), Approval_DTO.ReqBody.from(account));
-  //     updateApprovalKey(accountId, responseBody.getApproval_key());
-      
-  //     return responseBody.getApproval_key();
-  //   } catch (WebClientResponseException e) {
-  //     log.error("error: {}", e.getResponseBodyAsString());
-  //     return null;
-  //   }
+  // try {
+  // // GET 요청
+  // Approval_DTO.ResBody responseBody = new Approval(account.isVirtual())
+  // .post(new Approval_DTO.ReqHeader(), Approval_DTO.ReqBody.from(account));
+  // updateApprovalKey(accountId, responseBody.getApproval_key());
+
+  // return responseBody.getApproval_key();
+  // } catch (WebClientResponseException e) {
+  // log.error("error: {}", e.getResponseBodyAsString());
+  // return null;
+  // }
   // }
 
   public void getApproval(Long accountId) {
@@ -278,7 +308,7 @@ public class AccountService {
       Approval_DTO.ResBody responseBody = new Approval(account.isVirtual())
           .post(new Approval_DTO.ReqHeader(), Approval_DTO.ReqBody.from(account));
       updateApprovalKey(accountId, responseBody.getApproval_key());
-      
+
       return;
     } catch (WebClientResponseException e) {
       log.error("error: {}", e.getResponseBodyAsString());
@@ -319,14 +349,14 @@ public class AccountService {
     log.info("wsOverseas");
   }
 
-  public long getBalance(Long accountId) {
+  public Double getBalance(Long accountId) {
     Account account = accountRepository.findById(accountId)
         .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
     setBalance(accountId);
     return account.getBalance();
   }
 
-  public void updateBalance(Long accountId, long balance) {
+  public void updateBalance(Long accountId, Double balance) {
     Account updatedAccount = accountRepository.findById(accountId)
         .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
     updatedAccount.setBalance(balance);
@@ -334,25 +364,26 @@ public class AccountService {
   }
 
   public void setBalance(Long accountId) {
-    Long balance = 0L;
-    for (ResBodyOutput2 output2 : getAccountInfoDomestic(accountId).getOutput2()) {
-      balance += Long.parseLong(output2.getTot_evlu_amt());
-      // log.info("balance: {}", balance);
-      // log.info("output2: {}", output2.getTot_evlu_amt());
-    }
-    // balance += getAccountInfoOverseas(accountId).getOutput2().get
-    double balance2 = 0.0;
+    // Long balance = 0L;
+    // for (ResBodyOutput2 output2 : getAccountInfoDomestic(accountId).getOutput2()) {
+    //   balance += Long.parseLong(output2.getTot_evlu_amt());
+    //   // log.info("balance: {}", balance);
+    //   // log.info("output2: {}", output2.getTot_evlu_amt());
+    // }
+    // // balance += getAccountInfoOverseas(accountId).getOutput2().get
+    double balance = 0.0;
 
-    com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO.ResBodyOutput2 output2 = getAccountInfoOverseas(accountId).getOutput2();
+    com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO.ResBodyOutput2 output2 = getAccountInfoOverseas(
+        accountId).getOutput2();
 
-    balance2 += Double.parseDouble(output2.getFrcr_pchs_amt1());
-    balance2 += Double.parseDouble(output2.getOvrs_tot_pfls());
+    balance += Double.parseDouble(output2.getFrcr_pchs_amt1());
+    balance += Double.parseDouble(output2.getOvrs_tot_pfls());
     // log.info("balance: {}", getAccountInfoOverseas(accountId).toString());
 
     // // TODO: 환율 불러오기 적용
     // balance2 *= 1000;
 
-    updateBalance(accountId, balance+(long)balance2);
+    updateBalance(accountId, 100000 - balance);
   }
 
   public boolean isOwner(Long memberId, Long accountId) {
