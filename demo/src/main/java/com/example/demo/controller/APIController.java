@@ -199,8 +199,9 @@ public class APIController {
   }
 
   @GetMapping("api/stocksEvaluationBalance")
-  public ResponseEntity<List<StockBalance>> getStocksEvaluationBalance(@SessionAttribute(name = "id", required = false) Long id,
-  @RequestParam("accountId") Long accountId) {
+  public ResponseEntity<List<StockBalance>> getStocksEvaluationBalance(
+      @SessionAttribute(name = "id", required = false) Long id,
+      @RequestParam("accountId") Long accountId) {
 
     Member member = CheckSession(id);
     if (member == null)
@@ -224,7 +225,6 @@ public class APIController {
 
     return ResponseEntity.ok(stockBalances);
   }
-  
 
   @GetMapping("api/syncTradingRecord")
   public ResponseEntity<String> SyncTradingRecord(@SessionAttribute(name = "id", required = false) Long id,
@@ -243,6 +243,33 @@ public class APIController {
     recordController.SyncHistory(accountId);
 
     return ResponseEntity.ok("Success");
+  }
+
+  @PostMapping("api/trade")
+  public ResponseEntity<String> trade(@SessionAttribute(name = "id", required = false) Long id,
+      @RequestParam("accountId") Long accountId, @RequestBody StockOrderForm form) {
+
+    Member member = CheckSession(id);
+    if (member == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    Account account = accountService.findById(accountId);
+    if (account == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    if (!accountService.isOwner(member.getId(), account.getId()))
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    if (!form.getMethod().equals("buy") && !form.getMethod().equals("sell"))
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.order_DTO.ResBody resBody = accountService
+        .orderOverseas(accountId, com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.order_DTO.ReqBody
+            .from(account, form.getStockCode(), String.valueOf(form.getOrderAmount()), String.valueOf(form.getOrderPrice()), form.getMethod().equals("buy")), form.getMethod().equals("buy"));
+
+    if (resBody.getRt_cd().equals("0"))
+      return ResponseEntity.ok(form.getStockCode() + " " + form.getOrderAmount() + "주 " + (form.getMethod().equals("buy") ? "매수" : "매도") + " 성공");
+    else
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
   }
 
   private Member CheckSession(Long id) {
@@ -305,4 +332,12 @@ class StockBalance {
   private Double price;
   private int amount;
   private Double difference;
+}
+
+@Data
+class StockOrderForm {
+  private String stockCode;
+  private int orderAmount;
+  private Double orderPrice;
+  private String method;
 }
