@@ -149,7 +149,7 @@ public class APIController {
 
     // account 검사
     
-    return ResponseEntity.ok("Success");
+    return ResponseEntity.ok("Success" + account.getId() + " " + account.getAccountName() + " " + account.getAccountNumber() + " " + account.getAccountProdCode() + " " + account.isVirtual() + " " + account.getAPP_KEY() + " " + account.getAPP_SECRET());
   }
 
   @GetMapping("api/balance")
