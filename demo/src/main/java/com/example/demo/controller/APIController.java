@@ -27,7 +27,9 @@ import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Controller
 public class APIController {
 
@@ -140,6 +142,9 @@ public class APIController {
     Member member = CheckSession(id);
     if (member == null)
       return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    log.info("accountRegister: " + form.getAccountNumber() + " " + form.getAccountProdCode() + " " + form.getAccountName()
+        + " " + form.isVirtual() + " " + form.getAPP_KEY() + " " + form.getAPP_SECRET());
 
     Account account = new Account(id, Integer.parseInt(form.getAccountNumber()),
         Short.parseShort(form.getAccountProdCode()), form.getAccountName(),
