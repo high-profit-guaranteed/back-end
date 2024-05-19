@@ -133,6 +133,25 @@ public class APIController {
     return ResponseEntity.ok(accounts);
   }
 
+  @PostMapping("api/accounts")
+  public ResponseEntity<String> accountRegister(@SessionAttribute(name = "id", required = false) Long id,
+      @RequestBody AccountForm form) {
+
+    Member member = CheckSession(id);
+    if (member == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    Account account = new Account(id, Integer.parseInt(form.getAccountNumber()),
+        Short.parseShort(form.getAccountProdCode()), form.getAccountName(),
+        form.isVirtual(), form.getAPP_KEY(), form.getAPP_SECRET());
+
+    accountService.join(account);
+
+    // account 검사
+    
+    return ResponseEntity.ok("Success");
+  }
+
   @GetMapping("api/balance")
   public ResponseEntity<Balance> getBalance(@SessionAttribute(name = "id", required = false) Long id,
       @RequestParam("accountId") Long accountId) {
@@ -264,10 +283,13 @@ public class APIController {
 
     com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.order_DTO.ResBody resBody = accountService
         .orderOverseas(accountId, com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.order_DTO.ReqBody
-            .from(account, form.getStockCode(), String.valueOf(form.getOrderAmount()), String.valueOf(form.getOrderPrice()), form.getMethod().equals("buy")), form.getMethod().equals("buy"));
+            .from(account, form.getStockCode(), String.valueOf(form.getOrderAmount()),
+                String.valueOf(form.getOrderPrice()), form.getMethod().equals("buy")),
+            form.getMethod().equals("buy"));
 
     if (resBody.getRt_cd().equals("0"))
-      return ResponseEntity.ok(form.getStockCode() + " " + form.getOrderAmount() + "주 " + (form.getMethod().equals("buy") ? "매수" : "매도") + " 성공");
+      return ResponseEntity.ok(form.getStockCode() + " " + form.getOrderAmount() + "주 "
+          + (form.getMethod().equals("buy") ? "매수" : "매도") + " 성공");
     else
       return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
   }
