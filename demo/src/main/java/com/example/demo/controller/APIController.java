@@ -342,7 +342,7 @@ public class APIController {
     if (!accountService.isOwner(member.getId(), account.getId()))
       return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-    WsOverseasRequests req = accountService.wsOverseasRequests(accountId, stockCode, false);
+    WsOverseasRequests req = accountService.wsOverseasRequests(9L, stockCode, false);
 
     // model.addAttribute("stockInfo", response);
     return ResponseEntity.ok(req);

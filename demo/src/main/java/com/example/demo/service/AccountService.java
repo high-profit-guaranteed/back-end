@@ -24,6 +24,7 @@ import com.example.demo.kisAPI.classes.uapi.overseas_stock.v1.trading.order;
 import com.example.demo.kisAPI.dto.oauth2.Approval_DTO;
 import com.example.demo.kisAPI.dto.oauth2.tokenP_DTO;
 import com.example.demo.kisAPI.dto.tryitout.H0STCNT0_DTO;
+import com.example.demo.kisAPI.dto.tryitout.HDFSASP0_DTO;
 import com.example.demo.kisAPI.dto.tryitout.HDFSCNT0_DTO;
 import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.quotations.inquire_price_DTO;
 import com.example.demo.kisAPI.dto.uapi.domestic_stock.v1.trading.inquire_daily_ccld_DTO;
@@ -354,8 +355,8 @@ public class AccountService {
     Account account = accountRepository.findById(accountId)
         .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
 
-    HDFSCNT0_DTO.ReqHeader reqHeader = HDFSCNT0_DTO.ReqHeader.from(account, true);
-    HDFSCNT0_DTO.ReqBody reqBody = HDFSCNT0_DTO.ReqBody.from(code, isDay);
+    HDFSASP0_DTO.ReqHeader reqHeader = HDFSASP0_DTO.ReqHeader.from(account, true);
+    HDFSASP0_DTO.ReqBody reqBody = HDFSASP0_DTO.ReqBody.from(code, isDay);
 
     WsOverseasRequests req = new WsOverseasRequests(reqHeader, reqBody);
 
