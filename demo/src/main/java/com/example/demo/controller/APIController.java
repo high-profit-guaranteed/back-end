@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import com.example.demo.WsOverseasRequests;
 import com.example.demo.domain.Account;
 import com.example.demo.domain.BalanceRecord;
 import com.example.demo.domain.Member;
@@ -144,8 +145,9 @@ public class APIController {
     if (member == null)
       return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
-    log.info("accountRegister: " + form.getAccountNumber() + " " + form.getAccountProdCode() + " " + form.getAccountName()
-        + " " + form.isVirtual() + " " + form.getAPP_KEY() + " " + form.getAPP_SECRET());
+    log.info(
+        "accountRegister: " + form.getAccountNumber() + " " + form.getAccountProdCode() + " " + form.getAccountName()
+            + " " + form.isVirtual() + " " + form.getAPP_KEY() + " " + form.getAPP_SECRET());
 
     Account account = new Account(id, Integer.parseInt(form.getAccountNumber()),
         Short.parseShort(form.getAccountProdCode()), form.getAccountName(),
@@ -154,8 +156,10 @@ public class APIController {
     accountService.join(account);
 
     // account 검사
-    
-    return ResponseEntity.ok("Success" + account.getId() + " " + account.getAccountName() + " " + account.getAccountNumber() + " " + account.getAccountProdCode() + " " + account.isVirtual() + " " + account.getAPP_KEY() + " " + account.getAPP_SECRET());
+
+    return ResponseEntity.ok("Success" + account.getId() + " " + account.getAccountName() + " "
+        + account.getAccountNumber() + " " + account.getAccountProdCode() + " " + account.isVirtual() + " "
+        + account.getAPP_KEY() + " " + account.getAPP_SECRET());
   }
 
   @GetMapping("api/balance")
@@ -304,13 +308,15 @@ public class APIController {
 
   @GetMapping("api/stock")
   public ResponseEntity<StockPrice> getMethodName(@SessionAttribute(name = "id", required = false) Long id,
-  @RequestParam("accountId") Long accountId, @RequestParam("stockCode") String stockCode) {
+      @RequestParam("accountId") Long accountId, @RequestParam("stockCode") String stockCode) {
     Member member = CheckSession(id);
     if (member == null)
       return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
     Account account = accountService.findById(accountId);
     if (account == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    if (!accountService.isOwner(member.getId(), account.getId()))
       return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 
     ResBodyOutput output = accountService.getPriceOverseas(accountId, stockCode).getOutput();
@@ -320,7 +326,27 @@ public class APIController {
 
     return ResponseEntity.ok(stockPrice);
   }
-  
+
+  @GetMapping("api/realtimeStockData")
+  public ResponseEntity<WsOverseasRequests> getRealtimeStockData(@RequestParam("accountId") Long accountId,
+      @SessionAttribute(name = "id", required = false) Long id,
+      @RequestParam("stockCode") String stockCode) {
+
+    Member member = CheckSession(id);
+    if (member == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    Account account = accountService.findById(accountId);
+    if (account == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    if (!accountService.isOwner(member.getId(), account.getId()))
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    WsOverseasRequests req = accountService.wsOverseasRequests(accountId, stockCode, false);
+
+    // model.addAttribute("stockInfo", response);
+    return ResponseEntity.ok(req);
+  }
 
   private Member CheckSession(Long id) {
     if (id == null)

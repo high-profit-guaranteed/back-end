@@ -9,6 +9,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import com.example.demo.WsOverseasRequests;
 import com.example.demo.domain.Account;
 import com.example.demo.kisAPI.classes.oauth2.Approval;
 import com.example.demo.kisAPI.classes.oauth2.tokenP;
@@ -347,6 +348,18 @@ public class AccountService {
     test.post(reqHeader, reqBody);
 
     log.info("wsOverseas");
+  }
+
+  public WsOverseasRequests wsOverseasRequests(Long accountId, @NonNull String code, boolean isDay) {
+    Account account = accountRepository.findById(accountId)
+        .orElseThrow(() -> new IllegalStateException("해당 계좌가 존재하지 않습니다."));
+
+    HDFSCNT0_DTO.ReqHeader reqHeader = HDFSCNT0_DTO.ReqHeader.from(account, true);
+    HDFSCNT0_DTO.ReqBody reqBody = HDFSCNT0_DTO.ReqBody.from(code, isDay);
+
+    WsOverseasRequests req = new WsOverseasRequests(reqHeader, reqBody);
+
+    return req;
   }
 
   public Double getBalance(Long accountId) {
