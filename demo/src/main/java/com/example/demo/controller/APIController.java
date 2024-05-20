@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import com.example.demo.domain.Account;
 import com.example.demo.domain.BalanceRecord;
 import com.example.demo.domain.Member;
+import com.example.demo.kisAPI.dto.uapi.overseas_price.v1.quotations.price_DTO.ResBodyOutput;
 import com.example.demo.kisAPI.dto.uapi.overseas_stock.v1.trading.inquire_balance_DTO.ResBodyOutput1;
 import com.example.demo.service.AccountService;
 import com.example.demo.service.BalanceRecordService;
@@ -299,6 +300,28 @@ public class APIController {
       return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
   }
 
+  // accountService.getPriceOverseas(account.getId(), stockCode)
+
+  @GetMapping("api/stock")
+  public ResponseEntity<StockPrice> getMethodName(@SessionAttribute(name = "id", required = false) Long id,
+  @RequestParam("accountId") Long accountId, @RequestParam("stockCode") String stockCode) {
+    Member member = CheckSession(id);
+    if (member == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    Account account = accountService.findById(accountId);
+    if (account == null)
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+    ResBodyOutput output = accountService.getPriceOverseas(accountId, stockCode).getOutput();
+
+    StockPrice stockPrice = new StockPrice(stockCode, output.getLast(), output.getSign(),
+        output.getDiff(), output.getRate());
+
+    return ResponseEntity.ok(stockPrice);
+  }
+  
+
   private Member CheckSession(Long id) {
     if (id == null)
       return null;
@@ -367,4 +390,14 @@ class StockOrderForm {
   private int orderAmount;
   private Double orderPrice;
   private String method;
+}
+
+@Data
+@AllArgsConstructor
+class StockPrice {
+  private String stockCode;
+  private String lastPrice;
+  private String sign;
+  private String diffrence;
+  private String diffrenceRate;
 }
